@@ -3,6 +3,7 @@ import HeroImg from "../assets/heroImg.png";
 import { animateScroll as scroll } from "react-scroll";
 import "../App.css";
 import "../index.css";
+import { Link } from "react-router-dom";
 
 const Landing = () => {
   const [showScrollToTop, setShowScrollToTop] = useState(false);
@@ -57,18 +58,18 @@ const Landing = () => {
               </span>
             </a>
             <div className="flex items-center lg:order-2">
-              <a
-                href="#"
+              <Link
+                to="/login"
                 className="text-black bg-gray-300 hover:text-white focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px- lg:px-5 py-2 lg:py-2.5 mr-2 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800"
               >
                 Log in
-              </a>
-              <a
-                href="#"
+              </Link>
+              <Link
+                to="/signup"
                 className="text-black bg-gray-300 hover:text-white focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800"
               >
                 Get started
-              </a>
+              </Link>
               <button
                 data-collapse-toggle="mobile-menu-2"
                 type="button"
