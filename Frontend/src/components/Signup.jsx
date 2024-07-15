@@ -1,10 +1,24 @@
-import { React, useState } from "react";
+import { React, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "../App.css";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from 'react-toastify';
 
 const Details = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [hospital, setHospital] = useState("");
+  const navigate = useNavigate();
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -14,30 +28,47 @@ const Details = () => {
     setShowConfirmPassword(!showConfirmPassword);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = (e) => {
+    if (
+      !username ||
+      !password ||
+      !confirmPassword ||
+      !firstName ||
+      !lastName ||
+      !phone ||
+      !hospital
+    ) {
+      alert("Please fill all the fields");
+      return;
+    }
 
-    const response = await fetch("/signup", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email,
+    if (password !== confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
+    e.preventDefault();
+    axios
+      .post("http://localhost:3000/signup", {
+        username,
         password,
         firstName,
         lastName,
         phone,
         hospital,
-      }),
-    });
+      })
+      .then((result) => {
+        console.log(result);
+        navigate("/login");
+      })
+      .catch((err) => console.log(err));
 
-    const data = response.json();
-    if (data.success) {
-      console.log("Successfully signed up");
-    } else {
-      console.log("Failed to sign up");
-    }
+    setUsername("");
+    setPassword("");
+    setConfirmPassword("");
+    setFirstName("");
+    setLastName("");
+    setPhone("");
+    setHospital("");
   };
 
   return (
@@ -59,28 +90,32 @@ const Details = () => {
           <div className="mt-4">
             <div className="relative z-0 w-full mb-5 group">
               <input
-                type="email"
-                name="floating_email"
-                id="floating_email"
+                type="username"
+                name="floating_username"
+                id="floating_username"
                 className="block py-2.5 px-0 w-full text-sm text-white bg-transparent border-0 border-b-2 border-gray-300 appearance-none  dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                 placeholder=" "
                 required
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
               />
               <label
-                htmlFor="floating_email"
+                htmlFor="floating_username"
                 className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
               >
-                Email address
+                Username
               </label>
             </div>
             <div className="relative z-0 w-full mb-5 group">
               <input
                 type={showConfirmPassword ? "text" : "password"}
-                name="repeat_password"
-                id="floating_repeat_password"
+                name="password"
+                id="floating_password"
                 className="block py-2.5 px-0 w-full text-sm text-white bg-transparent border-0 border-b-2 border-gray-300 appearance-none  dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                 placeholder=" "
                 required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               />
               <button
                 type="button"
@@ -107,6 +142,8 @@ const Details = () => {
                 id="floating_repeat_password"
                 className="block py-2.5 px-0 w-full text-sm text-white bg-transparent border-0 border-b-2 border-gray-300 appearance-none  dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                 placeholder=" "
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
                 required
               />
               <button
@@ -138,6 +175,7 @@ const Details = () => {
                 )}
               </button>
             </div>
+
             <div className="grid md:grid-cols-2 md:gap-6">
               <div className="relative z-0 w-full mb-5 group">
                 <input
@@ -147,6 +185,8 @@ const Details = () => {
                   className="block py-2.5 px-0 w-full text-sm text-white bg-transparent border-0 border-b-2 border-gray-300 appearance-none  dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                   placeholder=" "
                   required
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
                 />
                 <label
                   htmlFor="floating_first_name"
@@ -155,6 +195,7 @@ const Details = () => {
                   First name
                 </label>
               </div>
+
               <div className="relative z-0 w-full mb-5 group">
                 <input
                   type="text"
@@ -163,6 +204,8 @@ const Details = () => {
                   className="block py-2.5 px-0 w-full text-sm text-white bg-transparent border-0 border-b-2 border-gray-300 appearance-none  dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                   placeholder=" "
                   required
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
                 />
                 <label
                   htmlFor="floating_last_name"
@@ -172,6 +215,7 @@ const Details = () => {
                 </label>
               </div>
             </div>
+
             <div className="grid md:grid-cols-2 md:gap-6">
               <div className="relative z-0 w-full mb-5 group">
                 <input
@@ -181,7 +225,9 @@ const Details = () => {
                   id="floating_phone"
                   className="block py-2.5 px-0 w-full text-sm text-white bg-transparent border-0 border-b-2 border-gray-300 appearance-none  dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                   placeholder=" "
+                  value={phone}
                   required
+                  onChange={(e) => setPhone(e.target.value)}
                 />
                 <label
                   htmlFor="floating_phone"
@@ -190,6 +236,7 @@ const Details = () => {
                   Phone number
                 </label>
               </div>
+
               <div className="relative z-0 w-full mb-5 group">
                 <input
                   type="text"
@@ -198,6 +245,8 @@ const Details = () => {
                   className="block py-2.5 px-0 w-full text-sm text-white bg-transparent border-0 border-b-2 border-gray-300 appearance-none  dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                   placeholder=" "
                   required
+                  value={hospital}
+                  onChange={(e) => setHospital(e.target.value)}
                 />
                 <label
                   htmlFor="floating_hospital"
@@ -207,6 +256,7 @@ const Details = () => {
                 </label>
               </div>
             </div>
+
             <div className="mb-3 text-s flex">
               <p className="text-white">Already have an account?</p>
               <Link

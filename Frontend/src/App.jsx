@@ -3,8 +3,7 @@ import "./App.css";
 import Landing from "./components/Landing";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
-import Home from "./components/Home";
-
+import Control from "./components/pages/Control";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 const router = createBrowserRouter([
@@ -36,15 +35,13 @@ const router = createBrowserRouter([
     path: "/home",
     element: (
       <div>
-        <Home />
+        <Control />
       </div>
     ),
   },
 ]);
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
     <>
       <RouterProvider router={router} />
