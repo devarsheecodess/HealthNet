@@ -3,9 +3,9 @@ import { Link } from "react-router-dom";
 import "../App.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from "react-toastify";
 
-const Details = () => {
+const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -57,10 +57,11 @@ const Details = () => {
         hospital,
       })
       .then((result) => {
-        console.log(result);
         navigate("/login");
       })
-      .catch((err) => console.log(err));
+      .catch(() => toast.error("Error creating account"));
+
+    toast.success("Account created successfully!");
 
     setUsername("");
     setPassword("");
@@ -280,4 +281,4 @@ const Details = () => {
   );
 };
 
-export default Details;
+export default Signup;

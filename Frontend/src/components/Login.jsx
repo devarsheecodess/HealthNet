@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import "../App.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -28,18 +29,9 @@ const Login = () => {
         console.log(result);
         if (result.data === "Logged in") {
           navigate('/home');
-          toast('Logged in successfully!', {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-          });
+          toast.success("Logged in successfully!");
         } else {
-          alert("Incorrect credentials");
+          toast.error("Incorrect credentials");
         }
       })
       .catch((err) => console.log(err));

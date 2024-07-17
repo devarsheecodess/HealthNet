@@ -12,7 +12,7 @@ const Dashboard = () => {
     const hours = date.getHours()
     if (hours < 12) {
       setGreeting('Good morning')
-    } else if (hours < 18) {
+    } else if (hours < 15) {
       setGreeting('Good afternoon')
     } else {
       setGreeting('Good evening')
@@ -24,7 +24,8 @@ const Dashboard = () => {
     const hours = date.getHours()
     const minutes = date.getMinutes()
     const seconds = date.getSeconds()
-    const finalTime = `${hours}:${minutes}:${seconds} ${hours >= 12 ? 'PM' : 'AM'}`
+
+    const finalTime = `${(hours % 12).toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')} ${hours >= 12 ? 'PM' : 'AM'}`
     setTime(finalTime)
   }
 
