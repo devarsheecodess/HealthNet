@@ -4,6 +4,7 @@ import "../App.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { v4 as uuidv4 } from 'uuid';
 
 const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -29,6 +30,7 @@ const Signup = () => {
   };
 
   const handleSubmit = (e) => {
+    const id = uuidv4();
     if (
       !username ||
       !password ||
@@ -55,6 +57,7 @@ const Signup = () => {
         lastName,
         phone,
         hospital,
+        id,
       })
       .then((result) => {
         navigate("/login");

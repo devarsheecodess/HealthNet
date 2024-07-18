@@ -1,21 +1,32 @@
-import { React, } from "react";
-import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { React, useEffect, useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 
 const Control = () => {
   const navigate = useNavigate();
+  const [id, setID] = useState("")
 
   const handleLogout = () => {
-    confirm("Are you sure you want to logout?");
-    navigate("/");
-    alert("Logged out successfully!");
+    const conf = confirm("Are you sure you want to logout?");
+    if (conf) {
+      localStorage.clear();
+      navigate("/");
+      alert("Logged out successfully!");
+    }
   }
+
+  const fetchID = () => {
+    setID(localStorage.getItem("id"));
+  }
+
+  useEffect(() => {
+    fetchID();
+  }, [id])
 
   return (
     <div>
       <aside id="logo-sidebar" className="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
         <div className="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-[#03071C]">
-          <Link to='/home' href="https://flowbite.com/" className="flex items-center ps-2.5 mb-5">
+          <Link to={`/home/${id}`} href="https://flowbite.com/" className="flex items-center ps-2.5 mb-5">
             <img src="https://flowbite.com/docs/images/logo.svg" className="h-6 me-3 sm:h-7" alt="Flowbite Logo" />
             <span className="self-center text-xl font-semibold whitespace-nowrap dark:text-white">Health<span className="text-[#C12A2A]">Net</span></span>
           </Link>
@@ -23,7 +34,7 @@ const Control = () => {
             {/* Dashboard */}
             <li>
               <Link
-                to="/home"
+                to={`/home/${id}`}
                 className="flex items-center p-3 pb-7 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
               >
                 <svg className="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 21">
@@ -37,7 +48,7 @@ const Control = () => {
             {/* Doctors */}
             <li>
               <Link
-                to="/doctors"
+                to={`/doctors/${id}`}
                 className="flex items-center p-3 pb-7 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
               >
                 <i className="fa-solid fa-user-doctor text-gray-400 text-xl"></i>
@@ -49,7 +60,7 @@ const Control = () => {
             {/* Patients */}
             <li>
               <Link
-                to="/patients"
+                to={`/patients/${id}`}
                 className="flex items-center p-3 pb-7 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
               >
                 <i className="fa-solid fa-head-side-mask text-gray-400 text-xl"></i>
@@ -60,7 +71,7 @@ const Control = () => {
             {/* Analytics */}
             <li>
               <Link
-                to="/analytics"
+                to={`/analytics/${id}`}
                 className="flex items-center p-3 pb-7 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
               >
                 <i className="fa-solid fa-chart-line text-gray-400 text-xl"></i>
@@ -71,7 +82,7 @@ const Control = () => {
             {/* Attendance */}
             <li>
               <Link
-                to="/attendance"
+                to={`/attendance/${id}`}
                 className="flex items-center p-3 pb-7 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
               >
                 <i className="fa-solid fa-clipboard-user text-gray-400 text-xl"></i>
@@ -82,7 +93,7 @@ const Control = () => {
             {/* Admissions */}
             <li>
               <Link
-                to="/admissions"
+                to={`/admissions/${id}`}
                 className="flex items-center p-3 pb-7 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
               >
                 <i className="fa-solid fa-bed-pulse text-gray-400 text-xl"></i>
@@ -93,7 +104,7 @@ const Control = () => {
             {/* News */}
             <li>
               <Link
-                to="/news"
+                to={`/news/${id}`}
                 className="flex items-center p-3 pb-7 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
               >
                 <i className="fa-solid fa-newspaper text-gray-400 text-xl"></i>

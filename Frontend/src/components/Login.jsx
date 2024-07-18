@@ -4,6 +4,7 @@ import "../App.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { v4 as uuidv4 } from 'uuid';
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -27,8 +28,10 @@ const Login = () => {
       .post("http://localhost:3000/login", { username, password })
       .then((result) => {
         console.log(result);
-        if (result.data === "Logged in") {
-          navigate('/home');
+        if (result.data.success) {
+          const { id, firstName } = result.data;
+          localStorage.setItem("firstName", firstName);
+          navigate(`/home/${id}`);
           toast.success("Logged in successfully!");
         } else {
           toast.error("Incorrect credentials");
@@ -39,7 +42,6 @@ const Login = () => {
     setUsername("");
     setPassword("");
   };
-
 
   return (
     <>

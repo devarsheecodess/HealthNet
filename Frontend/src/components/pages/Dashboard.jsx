@@ -1,11 +1,20 @@
 import { React, useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
 import dashIMG from '../../assets/dashboard.png'
+import axios from 'axios'
 
 const Dashboard = () => {
   const [greeting, setGreeting] = useState('')
   const [time, setTime] = useState('')
   const [date, setDate] = useState('')
   const [admin, setAdmin] = useState('')
+  const [patientsList, setPatientsList] = useState([])
+
+  const { id } = useParams();
+
+  const addID = () => {
+    localStorage.setItem('id', id)
+  }
 
   const getGreeting = () => {
     const date = new Date()
@@ -38,10 +47,22 @@ const Dashboard = () => {
     setDate(`${day} ${months[month]} ${year}`)
   }
 
+  const fetchPatients = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/patients");
+      setPatientsList(response.data);
+    } catch (error) {
+      console.error('Error fetching doctors:', error);
+    }
+  }
+
   useEffect(() => {
+    setAdmin(localStorage.getItem('firstName'))
+    addID()
     getGreeting()
     getTime()
     getDate()
+    fetchPatients()
 
     const intervalId = setInterval(getTime, 1000);
 
@@ -49,13 +70,13 @@ const Dashboard = () => {
   }, []);
 
   return (
-    <div className='bg-[#d0d0d0] min-h-screen'> {/* Change the background color and ensure it covers the full screen height */}
+    <div className='bg-[#d0d0d0] min-h-screen'>
       <div className='pt-6 pb-6 flex flex-col ml-72'>
         {/* Top part */}
         <div className='flex gap-9'>
           <div className='bg-black w-[470px] h-[149px] flex  items-center bg-white rounded-lg'>
             <div className='ml-7 mr-20'>
-              <h1 className='text-black font-bold mt-1 text-xl'>{greeting} Admin!</h1>
+              <h1 className='text-black font-bold mt-1 text-xl'>{greeting} {admin}</h1>
               <h5 className='font-semibold mt-6 text-sm'>{date}</h5>
               <h5 className='text-[#C12A2A] font-bold text-lg'>{time}</h5>
             </div>
@@ -102,236 +123,31 @@ const Dashboard = () => {
             </thead>
 
             <tbody>
-              <tr className="odd:bg-white  even:bg-gray-50 even:dark:bg-gray-300 border-b">
-                <th scope="row" className="px-6 py-4 text-gray-600 font-medium  whitespace-nowrap">
-                  Apple MacBook Pro 17"
-                </th>
-                <th scope="row" className="px-6 py-4 text-gray-600 font-medium  whitespace-nowrap">
-                  Apple MacBook Pro 17"
-                </th>
-                <td className="px-6 py-4 text-gray-600">
-                  Silver
-                </td>
-                <td className="px-6 py-4 text-gray-600">
-                  Laptop
-                </td>
-                <td className="px-6 py-4 text-gray-600">
-                  $2999
-                </td>
-                <td className="px-6 py-4 text-gray-600">
-                  <a href="#" className="font-medium text-black hover:underline"><i class="fa-solid fa-trash"></i><i class="fa-solid fa-pen-to-square ml-3"></i></a>
-                </td>
-              </tr>
+              {
+                patientsList.map((patient, index) => (
+                  <tr className="odd:bg-white  even:bg-gray-50 even:dark:bg-gray-300 border-b">
+                    <th scope="row" className="px-6 py-4 text-gray-600 font-medium  whitespace-nowrap">
+                      {patient.name}
+                    </th>
+                    <th scope="row" className="px-6 py-4 text-gray-600 font-medium  whitespace-nowrap" >
+                      {patient.doa}
+                    </th>
+                    <td className="px-6 py-4 text-gray-600">{patient.time}</td>
+                    <td className="px-6 py-4 text-gray-600">{patient.doctor}</td>
+                    <td className="px-6 py-4 text-gray-600">{patient.issue}</td>
+                    <td className="px-6 py-4 text-gray-600">
+                      <a href="#" className="font-medium text-black hover:underline">
+                        <i class="fa-solid fa-trash"></i>
+                        <i class="fa-solid fa-pen-to-square ml-3">
+                        </i>
+                      </a>
+                    </td>
+                  </tr>
 
-              <tr className="odd:bg-white  even:bg-gray-50 even:dark:bg-gray-300 border-b">
-                <th scope="row" className="px-6 py-4 text-gray-600 font-medium  whitespace-nowrap">
-                  Microsoft Surface Pro
-                </th>
-                <th scope="row" className="px-6 py-4 text-gray-600 font-medium  whitespace-nowrap">
-                  Microsoft Surface Pro
-                </th>
-                <td className="px-6 py-4 text-gray-600">
-                  White
-                </td>
-                <td className="px-6 py-4 text-gray-600">
-                  Laptop PC
-                </td>
-                <td className="px-6 py-4 text-gray-600">
-                  $1999
-                </td>
-                <td className="px-6 py-4 text-gray-600">
-                  <a href="#" className="font-medium text-black hover:underline"><i class="fa-solid fa-trash"></i><i class="fa-solid fa-pen-to-square ml-3"></i></a>
-                </td>
-              </tr>
+                ))
+              }
 
-              <tr className="odd:bg-white  even:bg-gray-50 even:dark:bg-gray-300 border-b">
-                <th scope="row" className="px-6 py-4 text-gray-600 font-medium  whitespace-nowrap">
-                  Magic Mouse 2
-                </th>
-                <th scope="row" className="px-6 py-4 text-gray-600 font-medium  whitespace-nowrap">
-                  Magic Mouse 2
-                </th>
-                <td className="px-6 py-4 text-gray-600">
-                  Black
-                </td>
-                <td className="px-6 py-4 text-gray-600">
-                  Accessories
-                </td>
-                <td className="px-6 py-4 text-gray-600">
-                  $99
-                </td>
-                <td className="px-6 py-4 text-gray-600">
-                  <a href="#" className="font-medium text-black hover:underline"><i class="fa-solid fa-trash"></i><i class="fa-solid fa-pen-to-square ml-3"></i></a>
-                </td>
-              </tr>
 
-              <tr className="odd:bg-white  even:bg-gray-50 even:dark:bg-gray-300 border-b">
-                <th scope="row" className="px-6 py-4 text-gray-600 font-medium  whitespace-nowrap">
-                  Google Pixel Phone
-                </th>
-                <th scope="row" className="px-6 py-4 text-gray-600 font-medium  whitespace-nowrap">
-                  Google Pixel Phone
-                </th>
-                <td className="px-6 py-4 text-gray-600">
-                  Gray
-                </td>
-                <td className="px-6 py-4 text-gray-600">
-                  Phone
-                </td>
-                <td className="px-6 py-4 text-gray-600">
-                  $799
-                </td>
-                <td className="px-6 py-4 text-gray-600">
-                  <a href="#" className="font-medium text-black hover:underline"><i class="fa-solid fa-trash"></i><i class="fa-solid fa-pen-to-square ml-3"></i></a>
-                </td>
-              </tr>
-
-              <tr className="odd:bg-white  even:bg-gray-50 even:dark:bg-gray-300 border-b">
-                <th scope="row" className="px-6 py-4 text-gray-600 font-medium  whitespace-nowrap">
-                  Magic Mouse 2
-                </th>
-                <th scope="row" className="px-6 py-4 text-gray-600 font-medium  whitespace-nowrap">
-                  Magic Mouse 2
-                </th>
-                <td className="px-6 py-4 text-gray-600">
-                  Black
-                </td>
-                <td className="px-6 py-4 text-gray-600">
-                  Accessories
-                </td>
-                <td className="px-6 py-4 text-gray-600">
-                  $99
-                </td>
-                <td className="px-6 py-4 text-gray-600">
-                  <a href="#" className="font-medium text-black hover:underline"><i class="fa-solid fa-trash"></i><i class="fa-solid fa-pen-to-square ml-3"></i></a>
-                </td>
-              </tr>
-
-              <tr className="odd:bg-white  even:bg-gray-50 even:dark:bg-gray-300 border-b">
-                <th scope="row" className="px-6 py-4 text-gray-600 font-medium  whitespace-nowrap">
-                  Google Pixel Phone
-                </th>
-                <th scope="row" className="px-6 py-4 text-gray-600 font-medium  whitespace-nowrap">
-                  Google Pixel Phone
-                </th>
-                <td className="px-6 py-4 text-gray-600">
-                  Gray
-                </td>
-                <td className="px-6 py-4 text-gray-600">
-                  Phone
-                </td>
-                <td className="px-6 py-4 text-gray-600">
-                  $799
-                </td>
-                <td className="px-6 py-4 text-gray-600">
-                  <a href="#" className="font-medium text-black hover:underline"><i class="fa-solid fa-trash"></i><i class="fa-solid fa-pen-to-square ml-3"></i></a>
-                </td>
-              </tr>
-
-              <tr className="odd:bg-white  even:bg-gray-50 even:dark:bg-gray-300 border-b">
-                <th scope="row" className="px-6 py-4 text-gray-600 font-medium  whitespace-nowrap">
-                  Magic Mouse 2
-                </th>
-                <th scope="row" className="px-6 py-4 text-gray-600 font-medium  whitespace-nowrap">
-                  Magic Mouse 2
-                </th>
-                <td className="px-6 py-4 text-gray-600">
-                  Black
-                </td>
-                <td className="px-6 py-4 text-gray-600">
-                  Accessories
-                </td>
-                <td className="px-6 py-4 text-gray-600">
-                  $99
-                </td>
-                <td className="px-6 py-4 text-gray-600">
-                  <a href="#" className="font-medium text-black hover:underline"><i class="fa-solid fa-trash"></i><i class="fa-solid fa-pen-to-square ml-3"></i></a>
-                </td>
-              </tr>
-
-              <tr className="odd:bg-white  even:bg-gray-50 even:dark:bg-gray-300 border-b">
-                <th scope="row" className="px-6 py-4 text-gray-600 font-medium  whitespace-nowrap">
-                  Google Pixel Phone
-                </th>
-                <th scope="row" className="px-6 py-4 text-gray-600 font-medium  whitespace-nowrap">
-                  Google Pixel Phone
-                </th>
-                <td className="px-6 py-4 text-gray-600">
-                  Gray
-                </td>
-                <td className="px-6 py-4 text-gray-600">
-                  Phone
-                </td>
-                <td className="px-6 py-4 text-gray-600">
-                  $799
-                </td>
-                <td className="px-6 py-4 text-gray-600">
-                  <a href="#" className="font-medium text-black hover:underline"><i class="fa-solid fa-trash"></i><i class="fa-solid fa-pen-to-square ml-3"></i></a>
-                </td>
-              </tr>
-
-              <tr className="odd:bg-white  even:bg-gray-50 even:dark:bg-gray-300 border-b">
-                <th scope="row" className="px-6 py-4 text-gray-600 font-medium  whitespace-nowrap">
-                  Magic Mouse 2
-                </th>
-                <th scope="row" className="px-6 py-4 text-gray-600 font-medium  whitespace-nowrap">
-                  Magic Mouse 2
-                </th>
-                <td className="px-6 py-4 text-gray-600">
-                  Black
-                </td>
-                <td className="px-6 py-4 text-gray-600">
-                  Accessories
-                </td>
-                <td className="px-6 py-4 text-gray-600">
-                  $99
-                </td>
-                <td className="px-6 py-4 text-gray-600">
-                  <a href="#" className="font-medium text-black hover:underline"><i class="fa-solid fa-trash"></i><i class="fa-solid fa-pen-to-square ml-3"></i></a>
-                </td>
-              </tr>
-
-              <tr className="odd:bg-white  even:bg-gray-50 even:dark:bg-gray-300 border-b">
-                <th scope="row" className="px-6 py-4 text-gray-600 font-medium  whitespace-nowrap">
-                  Google Pixel Phone
-                </th>
-                <th scope="row" className="px-6 py-4 text-gray-600 font-medium  whitespace-nowrap">
-                  Google Pixel Phone
-                </th>
-                <td className="px-6 py-4 text-gray-600">
-                  Gray
-                </td>
-                <td className="px-6 py-4 text-gray-600">
-                  Phone
-                </td>
-                <td className="px-6 py-4 text-gray-600">
-                  $799
-                </td>
-                <td className="px-6 py-4 text-gray-600">
-                  <a href="#" className="font-medium text-black hover:underline"><i class="fa-solid fa-trash"></i><i class="fa-solid fa-pen-to-square ml-3"></i></a>
-                </td>
-              </tr>
-
-              <tr className="odd:bg-white  even:bg-gray-50 even:dark:bg-gray-300 border-b">
-                <th scope="row" className="px-6 py-4 text-gray-600 font-medium  whitespace-nowrap">
-                  Magic Mouse 2
-                </th>
-                <th scope="row" className="px-6 py-4 text-gray-600 font-medium  whitespace-nowrap">
-                  Magic Mouse 2
-                </th>
-                <td className="px-6 py-4 text-gray-600">
-                  Black
-                </td>
-                <td className="px-6 py-4 text-gray-600">
-                  Accessories
-                </td>
-                <td className="px-6 py-4 text-gray-600">
-                  $99
-                </td>
-                <td className="px-6 py-4 text-gray-600">
-                  <a href="#" className="font-medium text-black hover:underline"><i class="fa-solid fa-trash"></i><i class="fa-solid fa-pen-to-square ml-3"></i></a>
-                </td>
-              </tr>
             </tbody>
           </table>
         </div>

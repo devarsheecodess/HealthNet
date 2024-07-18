@@ -40,7 +40,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/home",
+    path: "/home/:id",
     element: (
       <div>
         <Control />
@@ -49,7 +49,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/doctors",
+    path: "/doctors/:id",
     element: (
       <div>
         <Control />
@@ -58,7 +58,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/patients",
+    path: "/patients/:id",
     element: (
       <div>
         <Control />
@@ -67,7 +67,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/analytics",
+    path: "/analytics/:id",
     element: (
       <div>
         <Control />
@@ -76,7 +76,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/attendance",
+    path: "/attendance/:id",
     element: (
       <div>
         <Control />
@@ -85,7 +85,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/admissions",
+    path: "/admissions/:id",
     element: (
       <div>
         <Control />
@@ -94,7 +94,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/news",
+    path: "/news/:id",
     element: (
       <div>
         <Control />

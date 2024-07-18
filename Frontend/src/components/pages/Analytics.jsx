@@ -2,7 +2,6 @@ import { React, useState, useEffect } from 'react'
 import { Line, Doughnut } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
 import PulseLoader from "react-spinners/PulseLoader";
-import { set } from 'mongoose';
 
 const override = {
   display: "block",

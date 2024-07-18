@@ -8,7 +8,6 @@ const override = {
     borderColor: "red",
 };
 
-
 const News = () => {
     let [loading, setLoading] = useState(false);
     let [color, setColor] = useState("#010822");
@@ -16,17 +15,22 @@ const News = () => {
     const [data, setData] = useState([])
 
     const fetchNews = async () => {
-        setLoading(true)
-        const today = new Date();
-        const lastWeek = new Date();
-        lastWeek.setDate(today.getDate() - 7);
-        const API_KEY = "502d2b6968a34771ab5c58c2b2d6cf89"
-        const response = await fetch(
-            `https://newsapi.org/v2/everything?q=hospitals&from=${lastWeek.toISOString()}&to=${today.toISOString()}&sortBy=publishedAt&apiKey=${API_KEY}`
-        );
-        const data = await response.json()
-        setData(data.articles)
-        setLoading(false)
+        try {
+            setLoading(true)
+            const today = new Date();
+            const lastWeek = new Date();
+            lastWeek.setDate(today.getDate() - 7);
+            const API_KEY = "502d2b6968a34771ab5c58c2b2d6cf89"
+            const response = await fetch(
+                `https://newsapi.org/v2/everything?q=hospitals&from=${lastWeek.toISOString()}&to=${today.toISOString()}&sortBy=publishedAt&apiKey=${API_KEY}`
+            );
+            const data = await response.json()
+            setData(data.articles)
+            console.log(data)
+            setLoading(false)
+        } catch (error) {
+            alert("Failed to fetch news")
+        }
     }
 
     useEffect(() => {
@@ -47,20 +51,20 @@ const News = () => {
                                 size={15}
                             />
                             {
-                                data.map((news) => {
-                                    return (
-                                        <div className="p-4 md:w-1/3">
+                                data && data.length > 0 ? (
+                                    data.map((news) => (
+                                        <div className="p-4 md:w-1/3" key={news.id}>
                                             <div className='flex'>
                                                 <div className="bg-white border-2 border-gray-200 border-opacity-60 rounded-lg overflow-hidden">
-                                                    <img className="lg:h-48 md:h-36 w-full object-cover object-center" src={news.urlToImage == null ? Error : news.urlToImage} alt="blog">
-                                                    </img>
+                                                    <img className="lg:h-48 md:h-36 w-full object-cover object-center" src={news.urlToImage == null ? Error : news.urlToImage} alt="blog" />
                                                     <div className="p-6 bg-white">
                                                         <h2 className="tracking-widest text-xs title-font font-medium text-gray-400 mb-1">{news.source.name}</h2>
                                                         <h1 className="title-font text-lg font-medium text-gray-900 mb-3">{news.title}</h1>
                                                         <p className="leading-relaxed mb-3">{news.description}</p>
-                                                        <div className="flex items-center flex-wrap ">
-                                                            <a className="text-red-500 inline-flex items-center md:mb-2 lg:mb-0" href={news.url} target='_blank'>Learn More
-                                                                <svg className="w-4 h-4 ml-2" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                        <div className="flex items-center flex-wrap">
+                                                            <a className="text-red-500 inline-flex items-center md:mb-2 lg:mb-0" href={news.url} target='_blank' rel='noopener noreferrer'>
+                                                                Learn More
+                                                                <svg className="w-4 h-4 ml-2" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
                                                                     <path d="M5 12h14"></path>
                                                                     <path d="M12 5l7 7-7 7"></path>
                                                                 </svg>
@@ -73,9 +77,12 @@ const News = () => {
                                                 </div>
                                             </div>
                                         </div>
-                                    )
-                                })
+                                    ))
+                                ) : (
+                                    <div className='ml-4 mt-3 font-medium'>No news :/</div>
+                                )
                             }
+
                         </div>
                     </div>
                 </section>
