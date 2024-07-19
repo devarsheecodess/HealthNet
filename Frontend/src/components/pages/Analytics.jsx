@@ -2,13 +2,13 @@ import { React, useState, useEffect } from 'react'
 import { Line, Doughnut } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
 import PulseLoader from "react-spinners/PulseLoader";
+import axios from 'axios';
 
 const override = {
   display: "block",
   margin: "0 auto",
   borderColor: "red",
 };
-
 
 const earningsData = {
   labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
@@ -28,11 +28,79 @@ const EarningsChart = ({ data }) => {
 };
 
 const Analytics = () => {
-  //For Loader
   let [loading, setLoading] = useState(false);
   let [color, setColor] = useState("#010822");
 
   const [holidays, setHolidays] = useState([]);
+
+  const [admissionsList, setAdmissionsList] = useState([]);
+  const [patientsList, setPatientsList] = useState([]);
+
+  const [malePatients, setMalePatients] = useState("");
+  const [femalePatients, setFemalePatients] = useState("");
+
+  const [maleAdmissions, setMaleAdmissions] = useState("");
+  const [femaleAdmissions, setFemaleAdmissions] = useState("");
+
+  const [male, setMale] = useState("");
+  const [female, setFemale] = useState("");
+
+  const [total, setTotal] = useState("");
+
+  const fetchAdmisions = async () => {
+    const response = await axios.get("http://localhost:3000/admissions");
+    setAdmissionsList(response.data);
+  };
+
+  const fetchPatients = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/patients");
+      setPatientsList(response.data);
+    } catch (error) {
+      console.error('Error fetching doctors:', error);
+    }
+  }
+
+  const computeTotal = () => {
+    fetchAdmisions();
+    fetchPatients();
+    const patients = patientsList.length;
+    const admissions = admissionsList.length;
+    const total = patients + admissions;
+    setTotal(total.toString());
+  }
+
+  const fetchGenderPatients = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/patients");
+      const patients = response.data;
+
+      // Filter patients based on gender
+      const malePatients = patients.filter(patient => patient.gender.toLowerCase() === "male");
+      const femalePatients = patients.filter(patient => patient.gender.toLowerCase() === "female");
+
+      // Update the state with the filtered lists
+      setMalePatients(malePatients);
+      setFemalePatients(femalePatients);
+    } catch (error) {
+      console.error('Error fetching patients:', error);
+    }
+  }
+
+  const fetchGenderAdmissions = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/admissions");
+      const admissions = response.data;
+
+      const maleAdmissions = admissions.filter(admission => admission.gender.toLowerCase() === "male");
+      const femaleAdmissions = admissions.filter(admission => admission.gender.toLowerCase() === "female");
+
+      setMaleAdmissions(maleAdmissions);
+      setFemaleAdmissions(femaleAdmissions);
+    } catch (error) {
+      console.error('Error fetching admissions:', error);
+    }
+  }
 
   const getHolidays = async () => {
     setLoading(true)
@@ -46,9 +114,23 @@ const Analytics = () => {
     setLoading(false)
   }
 
+  const computeGenderTotal = () => {
+    fetchGenderPatients();
+    fetchGenderAdmissions();
+    const male = malePatients.length + maleAdmissions.length;
+    const female = femalePatients.length + femaleAdmissions.length;
+    setMale(male.toString());
+    setFemale(female.toString());
+  }
+
   useEffect(() => {
     getHolidays();
   }, [])
+
+  useEffect(() => {
+    computeTotal();
+    computeGenderTotal();
+  }, [admissionsList, patientsList, total, male, female])
 
   return (
     <div className='bg-[#d0d0d0] min-h-screen flex'>
@@ -66,16 +148,16 @@ const Analytics = () => {
 
         {/* Total Patients*/}
         <div className='flex flex-col mt-5 items-center w-[590px] h-[285px] bg-white rounded-xl'>
-          <h1 className='mt-10 font-bold text-[#C12A2A] text-2xl'>Total Patients Visited</h1>
-          <h5 className='font-medium text-2xl mt-5 text-center'>5000</h5>
+          <h1 className='mt-10 font-bold text-[#C12A2A] text-2xl'>Total Active Patients</h1>
+          <h5 className='font-medium text-2xl mt-5 text-center'>{total}</h5>
           <div className='flex gap-40 mt-16'>
             <div>
               <h1 className='font-bold text-[#C12A2A] text-2xl'>Male</h1>
-              <h5 className='font-medium text-lg text-center'>2500</h5>
+              <h5 className='font-medium text-lg text-center'>{male}</h5>
             </div>
             <div>
               <h1 className='font-bold text-[#C12A2A] text-2xl'>Female</h1>
-              <h5 className='font-medium text-lg text-center'>2500</h5>
+              <h5 className='font-medium text-lg text-center'>{female}</h5>
             </div>
           </div>
 

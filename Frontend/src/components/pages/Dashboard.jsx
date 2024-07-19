@@ -8,7 +8,12 @@ const Dashboard = () => {
   const [time, setTime] = useState('')
   const [date, setDate] = useState('')
   const [admin, setAdmin] = useState('')
+  
   const [patientsList, setPatientsList] = useState([])
+  const [doctorsList, setDoctorsList] = useState([])
+
+  const [totalPatients, setTotalPatients] = useState("")
+  const [totalDoctors, setTotalDoctors] = useState("")
 
   const { id } = useParams();
 
@@ -56,6 +61,26 @@ const Dashboard = () => {
     }
   }
 
+  const fetchDoctors = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/doctors");
+      setDoctorsList(response.data);
+    } catch (error) {
+      console.error('Error fetching doctors:', error);
+    }
+  }
+
+  const setTotal = async () => {
+    await fetchDoctors()
+    await fetchPatients()
+
+    const totalDoctors = doctorsList.length.toString()
+    const totalPatients = patientsList.length.toString()
+    
+    setTotalDoctors(totalDoctors)
+    setTotalPatients(totalPatients)
+  }
+
   useEffect(() => {
     setAdmin(localStorage.getItem('firstName'))
     addID()
@@ -68,6 +93,10 @@ const Dashboard = () => {
 
     return () => clearInterval(intervalId);
   }, []);
+
+  useEffect(() => {
+    setTotal()
+  }, [patientsList, doctorsList])
 
   return (
     <div className='bg-[#d0d0d0] min-h-screen'>
@@ -87,12 +116,12 @@ const Dashboard = () => {
             </div>
           </div>
           <div className='bg-black w-[341px] h-[149px] flex flex-col items-center justify-center bg-white rounded-lg'>
-            <h1 className='text-black font-bold mt-7 text-xl'>Total Patients</h1>
-            <h3 className='m-6 font-bold text-[#C12A2A] text-2xl'>1000</h3>
+            <h1 className='text-black font-bold mt-7 text-xl'>Total Appointments</h1>
+            <h3 className='m-6 font-bold text-[#C12A2A] text-2xl'>{totalPatients}</h3>
           </div>
           <div className='bg-black w-[341px] h-[149px] flex flex-col items-center justify-center bg-white rounded-lg'>
             <h1 className='text-black font-bold mt-7 text-xl'>Total Doctors</h1>
-            <h3 className='m-6 font-bold text-[#C12A2A] text-2xl'>1000</h3>
+            <h3 className='m-6 font-bold text-[#C12A2A] text-2xl'>{totalDoctors}</h3>
           </div>
         </div>
 

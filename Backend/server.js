@@ -4,6 +4,7 @@ const cors = require("cors");
 const model = require("./models/User");
 const docModel = require("./models/Doctors");
 const patModel = require("./models/Patients");
+const addModel = require("./models/Admissions");
 
 const app = express();
 app.use(express.json());
@@ -85,6 +86,19 @@ app.get("/patients", (req, res) => {
   patModel
     .find()
     .then((patients) => res.json(patients))
+    .catch((err) => res.json(err));
+});
+
+// Add Admissions
+app.post("/admissions", (req, res) => {
+  addModel.create(req.body).then((admissions) => res.json(admissions)); // Corrected .them() to .then()
+});
+
+// Get Admissions
+app.get("/admissions", (req, res) => {
+  addModel
+    .find()
+    .then((admissions) => res.json(admissions))
     .catch((err) => res.json(err));
 });
 

@@ -58,7 +58,8 @@ const Patients = () => {
   useEffect(() => {
     fetchDoctors();
     fetchPatients();
-  }, []);
+  }, [doctorsList, patientsList, patients]);
+
 
   return (
     <div className='bg-[#d0d0d0] min-h-screen'> {/* Change the background color and ensure it covers the full screen height */}
@@ -163,7 +164,7 @@ const Patients = () => {
           <div className='bg-white w-[600px] h-[550px] rounded-lg overflow-y-scroll'>
             <div className='flex flex-wrap justify-start'>
               {patientsList.map(patient => (
-                <div key={patient.id} className='w-[170px] h-64 ml-5 mt-5 bg-slate-800 rounded-lg inline-block'>
+                <div className='w-[170px] h-64 ml-5 mt-5 bg-slate-800 rounded-lg inline-block'>
                   <ul class="text-left text-gray-500 dark:text-gray-400 m-2">
                     <li class="flex items-center">
                       <span className='text-xs mb-1 font-semibold'>Name: {patient.name}</span>
