@@ -59,18 +59,14 @@ app.post("/doctors", (req, res) => {
 
 //Get Doctors
 app.get("/doctors", (req, res) => {
-  docModel
-    .find()
-    .then((doctors) => res.json(doctors))
-    .catch((err) => res.json(err));
-});
+  // Extract parentID from query parameters
+  const { parentID } = req.query;
 
-//Delete Doctors
-app.delete("/doctors", (req, res) => {
+  // Find doctors associated with the given parentID
   docModel
-    .delete()
+    .find({ parentID })
     .then((doctors) => res.json(doctors))
-    .catch((err) => res.json(err));
+    .catch((err) => res.status(500).json({ error: err.message }));
 });
 
 //Add Patients
@@ -81,23 +77,35 @@ app.post("/patients", (req, res) => {
     .catch((err) => res.json(err));
 });
 
-//Get Patients
+// Get Patients
 app.get("/patients", (req, res) => {
+  const { parentID } = req.query;
+
   patModel
-    .find()
+    .find({ parentID })
     .then((patients) => res.json(patients))
-    .catch((err) => res.json(err));
+    .catch((err) => {
+      console.error("Error fetching patients:", err);
+      res
+        .status(500)
+        .json({ error: "An error occurred while fetching patients" });
+    });
 });
 
 // Add Admissions
 app.post("/admissions", (req, res) => {
-  addModel.create(req.body).then((admissions) => res.json(admissions)); // Corrected .them() to .then()
+  addModel
+    .create(req.body)
+    .then((admissions) => res.json(admissions))
+    .catch((err) => res.json(err));
 });
 
 // Get Admissions
 app.get("/admissions", (req, res) => {
+  const { parentID } = req.query;
+
   addModel
-    .find()
+    .find({ parentID })
     .then((admissions) => res.json(admissions))
     .catch((err) => res.json(err));
 });

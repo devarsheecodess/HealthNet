@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 
 const doctorSchema = new mongoose.Schema({
+  parentID: "String",
   id: "String",
   image: "String",
   name: "String",

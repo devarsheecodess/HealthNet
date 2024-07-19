@@ -54,21 +54,35 @@ const Dashboard = () => {
 
   const fetchPatients = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/patients");
+      const parentID = localStorage.getItem('id');
+  
+      // Fetch doctors for the specific parentID
+      const response = await axios.get(`http://localhost:3000/patients`, {
+        params: { parentID }
+      });
+  
       setPatientsList(response.data);
     } catch (error) {
-      console.error('Error fetching doctors:', error);
+      console.error('Error fetching patients:', error);
     }
-  }
+  };
+  
 
   const fetchDoctors = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/doctors");
-      setDoctorsList(response.data);
+      // Retrieve parentID from local storage (or wherever you store it)
+      const parentID = localStorage.getItem('id');
+  
+      // Fetch doctors for the specific parentID
+      const response = await axios.get(`http://localhost:3000/doctors`, {
+        params: { parentID }
+      });
+  
+      setDoctorsList(response.data); // Update the state with fetched doctors
     } catch (error) {
       console.error('Error fetching doctors:', error);
     }
-  }
+  };
 
   const setTotal = async () => {
     await fetchDoctors()
@@ -76,7 +90,7 @@ const Dashboard = () => {
 
     const totalDoctors = doctorsList.length.toString()
     const totalPatients = patientsList.length.toString()
-    
+
     setTotalDoctors(totalDoctors)
     setTotalPatients(totalPatients)
   }
@@ -103,7 +117,7 @@ const Dashboard = () => {
       <div className='pt-6 pb-6 flex flex-col ml-72'>
         {/* Top part */}
         <div className='flex gap-9'>
-          <div className='bg-black w-[470px] h-[149px] flex  items-center bg-white rounded-lg'>
+          <div className='w-[470px] h-[149px] flex  items-center bg-white rounded-lg'>
             <div className='ml-7 mr-20'>
               <h1 className='text-black font-bold mt-1 text-xl'>{greeting} {admin}</h1>
               <h5 className='font-semibold mt-6 text-sm'>{date}</h5>
@@ -115,11 +129,11 @@ const Dashboard = () => {
               <img src={dashIMG} alt='Dashboard' className='w-[130px] h-[130px] rounded-lg' />
             </div>
           </div>
-          <div className='bg-black w-[341px] h-[149px] flex flex-col items-center justify-center bg-white rounded-lg'>
+          <div className='w-[341px] h-[149px] flex flex-col items-center justify-center bg-white rounded-lg'>
             <h1 className='text-black font-bold mt-7 text-xl'>Total Appointments</h1>
             <h3 className='m-6 font-bold text-[#C12A2A] text-2xl'>{totalPatients}</h3>
           </div>
-          <div className='bg-black w-[341px] h-[149px] flex flex-col items-center justify-center bg-white rounded-lg'>
+          <div className=' w-[341px] h-[149px] flex flex-col items-center justify-center bg-white rounded-lg'>
             <h1 className='text-black font-bold mt-7 text-xl'>Total Doctors</h1>
             <h3 className='m-6 font-bold text-[#C12A2A] text-2xl'>{totalDoctors}</h3>
           </div>
@@ -153,7 +167,7 @@ const Dashboard = () => {
 
             <tbody>
               {
-                patientsList.map((patient, index) => (
+                patientsList.length > 0 ? patientsList.map((patient, index) => (
                   <tr className="odd:bg-white  even:bg-gray-50 even:dark:bg-gray-300 border-b">
                     <th scope="row" className="px-6 py-4 text-gray-600 font-medium  whitespace-nowrap">
                       {patient.name}
@@ -166,14 +180,12 @@ const Dashboard = () => {
                     <td className="px-6 py-4 text-gray-600">{patient.issue}</td>
                     <td className="px-6 py-4 text-gray-600">
                       <a href="#" className="font-medium text-black hover:underline">
-                        <i class="fa-solid fa-trash"></i>
-                        <i class="fa-solid fa-pen-to-square ml-3">
-                        </i>
+                        <i class="fa-solid fa-trash text-red-800 hover:text-red-500"></i>
+                        <i class="fa-solid fa-circle-check ml-2 text-green-900 hover:text-green-500"></i>
                       </a>
                     </td>
                   </tr>
-
-                ))
+                )) : <div className='flex mt-3 ml-6'><p className='text-center text-gray-700 font-medium'>No appointments!</p></div>
               }
 
 

@@ -1,4 +1,4 @@
-import { React, useEffect, useState } from 'react'
+import { React, useEffect, useState} from 'react'
 import axios from 'axios'
 import { v4 as uuidv4 } from 'uuid';
 
@@ -34,9 +34,11 @@ const Doctors = () => {
   const addDoctor = async (e) => {
     e.preventDefault(); // Prevent default form submission
     const id = uuidv4(); // Generate a unique ID for the doctor
+    const parentID = localStorage.getItem('id'); // Retrieve parentID from local storage
 
     try {
       const response = await axios.post("http://localhost:3000/doctors", {
+        parentID: parentID,
         id: id,
         image: selectedImage,
         name: doctors.name,
@@ -85,12 +87,20 @@ const Doctors = () => {
 
   const fetchDoctors = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/doctors");
-      setDoctorsList(response.data);
+      // Retrieve parentID from local storage (or wherever you store it)
+      const parentID = localStorage.getItem('id');
+  
+      // Fetch doctors for the specific parentID
+      const response = await axios.get(`http://localhost:3000/doctors`, {
+        params: { parentID }
+      });
+  
+      setDoctorsList(response.data); // Update the state with fetched doctors
     } catch (error) {
       console.error('Error fetching doctors:', error);
     }
-  }
+  };
+  
 
   const handleDelete = async (id) => {
     try {

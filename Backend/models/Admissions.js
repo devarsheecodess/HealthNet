@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
 
 const AdmissionsSchema = new mongoose.Schema({
+  parentID: "String",
+  id: "String",
   name: "String",
   address: "String",
   phone: "String",

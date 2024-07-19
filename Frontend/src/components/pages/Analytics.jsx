@@ -48,18 +48,35 @@ const Analytics = () => {
   const [total, setTotal] = useState("");
 
   const fetchAdmisions = async () => {
-    const response = await axios.get("http://localhost:3000/admissions");
-    setAdmissionsList(response.data);
+    try {
+      // Retrieve parentID from local storage
+      const parentID = localStorage.getItem('id');
+
+      // Fetch admissions for the specific parentID
+      const response = await axios.get('http://localhost:3000/admissions', {
+        params: { parentID }
+      });
+
+      // Update the state with fetched admissions
+      setAdmissionsList(response.data);
+    } catch (error) {
+      console.error('Error fetching admissions:', error);
+    }
   };
 
   const fetchPatients = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/patients");
+      const parentID = localStorage.getItem('id');
+
+      const response = await axios.get(`http://localhost:3000/patients`, {
+        params: { parentID }
+      });
+
       setPatientsList(response.data);
     } catch (error) {
-      console.error('Error fetching doctors:', error);
+      console.error('Error fetching patients:', error);
     }
-  }
+  };
 
   const computeTotal = () => {
     fetchAdmisions();
@@ -72,7 +89,10 @@ const Analytics = () => {
 
   const fetchGenderPatients = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/patients");
+      const parentID = localStorage.getItem('id');
+
+      // Fetch patients with parentID as a query parameter
+      const response = await axios.get("http://localhost:3000/patients", { params: { parentID } });
       const patients = response.data;
 
       // Filter patients based on gender
@@ -85,11 +105,13 @@ const Analytics = () => {
     } catch (error) {
       console.error('Error fetching patients:', error);
     }
-  }
+  };
 
   const fetchGenderAdmissions = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/admissions");
+      const parentID = localStorage.getItem('id');
+
+      const response = await axios.get("http://localhost:3000/admissions", { params: { parentID } });
       const admissions = response.data;
 
       const maleAdmissions = admissions.filter(admission => admission.gender.toLowerCase() === "male");

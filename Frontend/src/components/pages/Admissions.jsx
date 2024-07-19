@@ -13,8 +13,10 @@ const Admissions = () => {
   const addAdmission = async (e) => {
     e.preventDefault(); // Prevent default form submission
     const id = uuidv4(); // Generate a unique ID for the doctor
+    const parentID = localStorage.getItem('id'); // Get the parentID from localStorage
 
     const response = await axios.post("http://localhost:3000/admissions", {
+      parentID: parentID,
       id: id,
       name: admissions.name,
       address: admissions.address,
@@ -36,13 +38,23 @@ const Admissions = () => {
     setAdmissions({ name: "", address: "", phone: "", age: "", gender: "", dob: "", bloodGroup: "", reason: "", bed: "", dateOfAdmission: "" }); // Clear the form
   };
 
-  const fetchAdmmisions = async () => {
-    const response = await axios.get("http://localhost:3000/admissions");
-    setAdmissionsList(response.data);
+  const fetchAdmissions = async () => {
+    try {
+      // Retrieve parentID from local storage (or wherever you store it)
+      const parentID = localStorage.getItem('id');
+  
+      const response = await axios.get(`http://localhost:3000/admissions`, {
+        params: { parentID }
+      });
+  
+      setAdmissionsList(response.data); // Update the state with fetched doctors
+    } catch (error) {
+      console.error('Error fetching admissions:', error);
+    }
   };
 
   useState(() => {
-    fetchAdmmisions();
+    fetchAdmissions();
   }, []);
 
   return (

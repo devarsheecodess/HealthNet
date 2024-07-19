@@ -10,21 +10,28 @@ const Patients = () => {
 
   const fetchDoctors = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/doctors");
-      console.log('Doctors:', response.data);
-      setDoctorsList(response.data);
+      // Retrieve parentID from local storage (or wherever you store it)
+      const parentID = localStorage.getItem('id');
+
+      // Fetch doctors for the specific parentID
+      const response = await axios.get(`http://localhost:3000/doctors`, {
+        params: { parentID }
+      });
+
+      setDoctorsList(response.data); // Update the state with fetched doctors
     } catch (error) {
       console.error('Error fetching doctors:', error);
     }
-  }
+  };
 
   const addPatient = async (e) => {
     e.preventDefault(); // Prevent default form submission
     const id = uuidv4(); // Generate a unique ID for the doctor
+    const parentID = localStorage.getItem('id');
 
     try {
       const response = await axios.post("http://localhost:3000/patients", {
-        id: id, name: patients.name, address: patients.address, phone: patients.phone, age: patients.age, gender: patients.gender, issue: patients.issue, doctor: patients.doctor, doa: patients.doa, time: patients.time,
+        parentID: parentID, id: id, name: patients.name, address: patients.address, phone: patients.phone, age: patients.age, gender: patients.gender, issue: patients.issue, doctor: patients.doctor, doa: patients.doa, time: patients.time,
       });
 
       const updatedPatientsList = [...patientsList, response.data];
@@ -44,12 +51,19 @@ const Patients = () => {
 
   const fetchPatients = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/patients");
+      const parentID = localStorage.getItem('id');
+  
+      // Fetch doctors for the specific parentID
+      const response = await axios.get(`http://localhost:3000/patients`, {
+        params: { parentID }
+      });
+  
       setPatientsList(response.data);
     } catch (error) {
-      console.error('Error fetching doctors:', error);
+      console.error('Error fetching patients:', error);
     }
-  }
+  };
+  
 
   const handleChange = (e) => {
     setPatients({ ...patients, [e.target.name]: e.target.value });
@@ -194,10 +208,6 @@ const Patients = () => {
                     <li class="flex items-center">
                       <span className='text-xs mb-1 font-semibold'>Time: {patient.time}</span>
                     </li>
-                    <div className='mb-2 text-right mr-2 text-gray-300'>
-                      <i className="fa-solid fa-trash ml-4"></i>
-                      <i className="fa-solid fa-pen-to-square ml-4"></i>
-                    </div>
                   </ul>
                 </div>
               ))}
