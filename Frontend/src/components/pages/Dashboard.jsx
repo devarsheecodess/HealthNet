@@ -2,18 +2,28 @@ import { React, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import dashIMG from '../../assets/dashboard.png'
 import axios from 'axios'
+import PulseLoader from "react-spinners/PulseLoader";
+
+const override = {
+  display: "block",
+  margin: "0 auto",
+  borderColor: "red",
+};
 
 const Dashboard = () => {
   const [greeting, setGreeting] = useState('')
   const [time, setTime] = useState('')
   const [date, setDate] = useState('')
   const [admin, setAdmin] = useState('')
-  
+
   const [patientsList, setPatientsList] = useState([])
   const [doctorsList, setDoctorsList] = useState([])
 
   const [totalPatients, setTotalPatients] = useState("")
   const [totalDoctors, setTotalDoctors] = useState("")
+
+  let [loading, setLoading] = useState(false);
+  let [color, setColor] = useState("#010822");
 
   const { id } = useParams();
 
@@ -39,7 +49,9 @@ const Dashboard = () => {
     const minutes = date.getMinutes()
     const seconds = date.getSeconds()
 
-    const finalTime = `${(hours % 12).toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')} ${hours >= 12 ? 'PM' : 'AM'}`
+    const hours12Format = hours % 12 === 0 ? 12 : hours % 12;
+    const finalTime = `${hours12Format.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')} ${hours >= 12 ? 'PM' : 'AM'}`;
+
     setTime(finalTime)
   }
 
@@ -55,30 +67,27 @@ const Dashboard = () => {
   const fetchPatients = async () => {
     try {
       const parentID = localStorage.getItem('id');
-  
-      // Fetch doctors for the specific parentID
+
       const response = await axios.get(`http://localhost:3000/patients`, {
         params: { parentID }
       });
-  
+
       setPatientsList(response.data);
     } catch (error) {
       console.error('Error fetching patients:', error);
     }
   };
-  
+
 
   const fetchDoctors = async () => {
     try {
-      // Retrieve parentID from local storage (or wherever you store it)
       const parentID = localStorage.getItem('id');
-  
-      // Fetch doctors for the specific parentID
+
       const response = await axios.get(`http://localhost:3000/doctors`, {
         params: { parentID }
       });
-  
-      setDoctorsList(response.data); // Update the state with fetched doctors
+
+      setDoctorsList(response.data);
     } catch (error) {
       console.error('Error fetching doctors:', error);
     }
@@ -96,12 +105,14 @@ const Dashboard = () => {
   }
 
   useEffect(() => {
+    setLoading(true)
     setAdmin(localStorage.getItem('firstName'))
     addID()
     getGreeting()
     getTime()
     getDate()
     fetchPatients()
+    setLoading(false)
 
     const intervalId = setInterval(getTime, 1000);
 
@@ -109,11 +120,19 @@ const Dashboard = () => {
   }, []);
 
   useEffect(() => {
+    setLoading(true)
     setTotal()
+    setLoading(false)
   }, [patientsList, doctorsList])
 
   return (
     <div className='bg-[#d0d0d0] min-h-screen'>
+      <PulseLoader
+        color={color}
+        loading={loading}
+        cssOverride={override}
+        size={15}
+      />
       <div className='pt-6 pb-6 flex flex-col ml-72'>
         {/* Top part */}
         <div className='flex gap-9'>
@@ -140,9 +159,9 @@ const Dashboard = () => {
         </div>
 
         {/* Table*/}
-        <div className="relative overflow-x-auto shadow-md sm:rounded-lg mt-10 w-[1225px] h-[455px] bg-white overflow-y-auto">
+        <div className=" overflow-x-auto shadow-md sm:rounded-lg mt-10 w-[1225px] h-[455px] bg-white overflow-y-auto">
           <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-            <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-[#03071C] dark:text-gray-400 sticky top-0">
+            <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-[#03071C] dark:text-gray-400 top-0">
               <tr>
                 <th scope="col" className="px-6 py-3">
                   Patients

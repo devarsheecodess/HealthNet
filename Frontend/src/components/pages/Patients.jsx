@@ -1,6 +1,7 @@
 import { React, useState, useEffect } from 'react'
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
+import { toast } from 'react-toastify';
 
 const Patients = () => {
   const [doctorsList, setDoctorsList] = useState([]);
@@ -8,25 +9,27 @@ const Patients = () => {
   const [patients, setPatients] = useState({ name: "", address: "", phone: "", age: "", gender: "", issue: "", doctor: "", doa: "", time: "" });
   const [patientsList, setPatientsList] = useState([])
 
+  const [filteredPatients, setFilteredPatients] = useState(patientsList);
+
+  const [search, setSearch] = useState("");
+
   const fetchDoctors = async () => {
     try {
-      // Retrieve parentID from local storage (or wherever you store it)
       const parentID = localStorage.getItem('id');
 
-      // Fetch doctors for the specific parentID
       const response = await axios.get(`http://localhost:3000/doctors`, {
         params: { parentID }
       });
 
-      setDoctorsList(response.data); // Update the state with fetched doctors
+      setDoctorsList(response.data);
     } catch (error) {
       console.error('Error fetching doctors:', error);
     }
   };
 
   const addPatient = async (e) => {
-    e.preventDefault(); // Prevent default form submission
-    const id = uuidv4(); // Generate a unique ID for the doctor
+    e.preventDefault();
+    const id = uuidv4();
     const parentID = localStorage.getItem('id');
 
     try {
@@ -35,45 +38,64 @@ const Patients = () => {
       });
 
       const updatedPatientsList = [...patientsList, response.data];
-      setDoctorsList(updatedPatientsList); // Schedule the update to the doctorsList state
-      console.log(updatedPatientsList); // Log the updated list
-      console.log(response.data); // Log the response data
+      setDoctorsList(updatedPatientsList);
+      console.log(updatedPatientsList);
+      console.log(response.data);
 
-      alert('Patient added successfully');
+      toast.success('Patient added successfully');
       setPatients({
         name: "", address: "", phone: "", age: "", gender: "", issue: "", doctor: "", doa: "", time: ""
       });
     } catch (error) {
       console.error('Error adding patient:', error);
-      alert('Failed to add patient. Please try again.');
+      toast.error('Failed to add patient. Please try again.');
     }
   };
 
   const fetchPatients = async () => {
     try {
       const parentID = localStorage.getItem('id');
-  
-      // Fetch doctors for the specific parentID
+
       const response = await axios.get(`http://localhost:3000/patients`, {
         params: { parentID }
       });
-  
+
       setPatientsList(response.data);
     } catch (error) {
       console.error('Error fetching patients:', error);
     }
   };
-  
 
   const handleChange = (e) => {
     setPatients({ ...patients, [e.target.name]: e.target.value });
+  };
+
+  const handleSearch = (e) => {
+    try {
+      const query = e.target.value.toLowerCase();
+      setSearch(query);
+      if (query) {
+        const filtered = patientsList.filter((patient) =>
+          patient.name.toLowerCase().includes(query)
+        );
+
+        if (filtered.length === 0) {
+          toast.error("No results found!");
+        }
+
+        setFilteredPatients(filtered);
+      } else {
+        setFilteredPatients(patientsList);
+      }
+    } catch (error) {
+      console.error('Error filtering admissions:', error);
+    }
   };
 
   useEffect(() => {
     fetchDoctors();
     fetchPatients();
   }, [doctorsList, patientsList, patients]);
-
 
   return (
     <div className='bg-[#d0d0d0] min-h-screen'> {/* Change the background color and ensure it covers the full screen height */}
@@ -160,57 +182,56 @@ const Patients = () => {
               <h1 className='text-[#C12A2A] font-bold text-2xl ml-5 mt-5'>Patients</h1>
             </div>
             <div className='ml-32 w-80'>
-              <label for="default-search" class="mb-2 w-full text-xs mb-1 font-semibold font-medium text-gray-900 font-light dark:text-white">Search</label>
-              <div class="relative">
+              <label for="default-search" class="mb-2 w-full text-sm font-medium text-gray-900 dark:text-white">Search</label>
+              <div>
                 <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                   <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
                   </svg>
                 </div>
-                <input type="search" id="default-search" class="block w-full p-4 ps-10 text-xs mb-1 font-semibold text-gray-900 font-light border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search for Patients" required />
-                <button type="submit" class="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-xs mb-1 font-semibold px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Search</button>
+                <input type="search" value={search} onChange={handleSearch} id="default-search" class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search for patients" />
               </div>
             </div>
           </div>
 
-
           {/* DISPLAY */}
           <div className='bg-white w-[600px] h-[550px] rounded-lg overflow-y-scroll'>
             <div className='flex flex-wrap justify-start'>
-              {patientsList.map(patient => (
-                <div className='w-[170px] h-64 ml-5 mt-5 bg-slate-800 rounded-lg inline-block'>
-                  <ul class="text-left text-gray-500 dark:text-gray-400 m-2">
-                    <li class="flex items-center">
-                      <span className='text-xs mb-1 font-semibold'>Name: {patient.name}</span>
-                    </li>
-                    <li class="flex items-center">
-
-                      <span className='text-xs mb-1 font-semibold'>Address: {patient.address}</span>
-                    </li>
-                    <li class="flex items-center">
-                      <span className='text-xs mb-1 font-semibold'>Phone: {patient.phone}</span>
-                    </li>
-                    <li class="flex items-center">
-                      <span className='text-xs mb-1 font-semibold'>Age: {patient.age}</span>
-                    </li>
-                    <li class="flex items-center">
-                      <span className='text-xs mb-1 font-semibold'>Gender: {patient.gender}</span>
-                    </li>
-                    <li class="flex items-center">
-                      <span className='text-xs mb-1 font-semibold'>issue: {patient.issue}</span>
-                    </li>
-                    <li class="flex items-center">
-                      <span className='text-xs mb-1 font-semibold'>doctor: {patient.doctor}</span>
-                    </li>
-                    <li class="flex items-center">
-                      <span className='text-xs mb-1 font-semibold'>Appointment date: {patient.doa}</span>
-                    </li>
-                    <li class="flex items-center">
-                      <span className='text-xs mb-1 font-semibold'>Time: {patient.time}</span>
-                    </li>
-                  </ul>
-                </div>
-              ))}
+              {filteredPatients && filteredPatients.length > 0 ? (
+                filteredPatients.map((patient) => (
+                  <div key={patient.id} className='w-[170px] h-min ml-5 mt-5 bg-slate-800 rounded-lg inline-block p-3'>
+                    <div>
+                      <h1 className='text-white text-sm'><span className='font-bold'>Name: </span>{patient.name}</h1>
+                      <h1 className='text-white text-sm'><span className='font-bold'>Address:</span> {patient.address}</h1>
+                      <h1 className='text-white text-sm'><span className='font-bold'>Phone number:</span> {patient.phone}</h1>
+                      <h1 className='text-white text-sm'><span className='font-bold'>Age:</span> {patient.age}</h1>
+                      <h1 className='text-white text-sm'><span className='font-bold'>Gender:</span> {patient.gender}</h1>
+                      <h1 className='text-white text-sm'><span className='font-bold'>Issue:</span> {patient.issue}</h1>
+                      <h1 className='text-white text-sm'><span className='font-bold'>Doctor:</span> {patient.doctor}</h1>
+                      <h1 className='text-white text-sm'><span className='font-bold'>Date: </span>{patient.doa}</h1>
+                      <h1 className='text-white text-sm'><span className='font-bold'>Time: </span>{patient.time}</h1>
+                    </div>
+                    <div className='mt-5 text-right mr-4 text-gray-300'>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                patientsList.map((patient) => (
+                  <div key={patient.id} className='w-[170px] h-min ml-5 mt-5 bg-slate-800 rounded-lg inline-block p-3'>
+                    <div>
+                      <h1 className='text-white text-sm'><span className='font-bold'>Name: </span>{patient.name}</h1>
+                      <h1 className='text-white text-sm'><span className='font-bold'>Address:</span> {patient.address}</h1>
+                      <h1 className='text-white text-sm'><span className='font-bold'>Phone number:</span> {patient.phone}</h1>
+                      <h1 className='text-white text-sm'><span className='font-bold'>Age:</span> {patient.age}</h1>
+                      <h1 className='text-white text-sm'><span className='font-bold'>Gender:</span> {patient.gender}</h1>
+                      <h1 className='text-white text-sm'><span className='font-bold'>Issue:</span> {patient.issue}</h1>
+                      <h1 className='text-white text-sm'><span className='font-bold'>Doctor:</span> {patient.doctor}</h1>
+                      <h1 className='text-white text-sm'><span className='font-bold'>Date: </span>{patient.doa}</h1>
+                      <h1 className='text-white text-sm'><span className='font-bold'>Time: </span>{patient.time}</h1>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         </div>

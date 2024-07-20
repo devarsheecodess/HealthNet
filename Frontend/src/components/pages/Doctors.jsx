@@ -1,11 +1,25 @@
-import { React, useEffect, useState} from 'react'
+import { React, useEffect, useState, useRef } from 'react'
 import axios from 'axios'
+import { toast } from "react-toastify";
 import { v4 as uuidv4 } from 'uuid';
 
 const Doctors = () => {
+  const fileInputRef = useRef(null);
   const [selectedImage, setSelectedImage] = useState(null);
   const [doctors, setDoctors] = useState({ image: "", name: "", address: "", phone: "", age: "", gender: "", dob: "", lisence: "", department: "", doj: "", salary: "" });
   const [doctorsList, setDoctorsList] = useState([]);
+
+  const [showModal, setShowModal] = useState(false);
+  const [selectedDoctor, setSelectedDoctor] = useState(null);
+
+  const [search, setSearch] = useState("");
+
+  const [filteredDoctors, setFilteredDoctors] = useState(doctorsList);
+
+  const handleModalToggle = (doctor) => {
+    setSelectedDoctor(doctor);
+    setShowModal(!showModal);
+  };
 
   const handleImageChange = (e) => {
     if (e.target.files && e.target.files[0]) {
@@ -54,11 +68,11 @@ const Doctors = () => {
       });
 
       const updatedDoctorsList = [...doctorsList, response.data];
-      setDoctorsList(updatedDoctorsList); // Schedule the update to the doctorsList state
-      console.log(updatedDoctorsList); // Log the updated list
-      console.log(response.data); // Log the response data
+      setDoctorsList(updatedDoctorsList);
+      console.log(updatedDoctorsList);
+      console.log(response.data);
 
-      alert('Doctor added successfully');
+      toast.success("Doctor added successfully!");
       setDoctors({
         image: "",
         name: "",
@@ -76,7 +90,7 @@ const Doctors = () => {
       setSelectedImage(null);
     } catch (error) {
       console.error('Error adding doctor:', error);
-      alert('Failed to add doctor. Please try again.');
+      toast.error('Failed to add doctor. Please try again.');
       localStorage.removeItem('image');
     }
   };
@@ -87,34 +101,55 @@ const Doctors = () => {
 
   const fetchDoctors = async () => {
     try {
-      // Retrieve parentID from local storage (or wherever you store it)
       const parentID = localStorage.getItem('id');
-  
-      // Fetch doctors for the specific parentID
+
       const response = await axios.get(`http://localhost:3000/doctors`, {
         params: { parentID }
       });
-  
-      setDoctorsList(response.data); // Update the state with fetched doctors
+
+      setDoctorsList(response.data);
     } catch (error) {
       console.error('Error fetching doctors:', error);
     }
   };
-  
 
   const handleDelete = async (id) => {
     try {
       await axios.delete(`http://localhost:3000/doctors/${id}`);
       const updatedDoctorsList = doctorsList.filter((doctor) => doctor.id !== id);
       setDoctorsList(updatedDoctorsList);
+      toast.success("Doctor deleted successfully!");
     } catch (error) {
       console.error('Error deleting doctor:', error);
+      toast.error('Failed to delete doctor. Please try again.');
+    }
+  };
+
+  const handleSearch = (e) => {
+    try {
+      const query = e.target.value.toLowerCase();
+      setSearch(query);
+      if (query) {
+        const filtered = doctorsList.filter((doctor) =>
+          doctor.name.toLowerCase().includes(query)
+        );
+
+        if (filtered.length === 0) {
+          toast.error("No results found!");
+        }
+
+        setFilteredDoctors(filtered);
+      } else {
+        setFilteredDoctors(doctorsList);
+      }
+    } catch (error) {
+      console.error('Error filtering doctors:', error);
     }
   };
 
   useEffect(() => {
     fetchDoctors();
-  }, []);
+  }, [doctors, doctorsList, filteredDoctors]);
 
   return (
     <div className='bg-[#d0d0d0] min-h-screen'> {/* Change the background color and ensure it covers the full screen height */}
@@ -229,14 +264,13 @@ const Doctors = () => {
             </div>
             <div className='ml-32 w-80'>
               <label for="default-search" class="mb-2 w-full text-sm font-medium text-gray-900 dark:text-white">Search</label>
-              <div class="relative">
+              <div>
                 <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                   <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
                   </svg>
                 </div>
-                <input type="search" id="default-search" class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search for doctors" />
-                <button type="submit" class="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Search</button>
+                <input type="search" value={search} onChange={handleSearch} id="default-search" class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search for doctors" />
               </div>
             </div>
           </div>
@@ -244,24 +278,69 @@ const Doctors = () => {
           {/* DISPLAY */}
           <div className='bg-white w-[600px] h-[550px] rounded-lg overflow-y-scroll'> {/* Adjusted for vertical scrolling */}
             <div className='flex flex-wrap justify-start'> {/* Container for boxes, ensuring they are laid out properly */}
-              {
-                doctorsList.map((doctor) => ( // Map through the doctorsList array
-                  <div className='w-[170px] h-60 ml-5 mt-5 bg-slate-800 rounded-lg inline-block'>
-                    <div className='flex justify-center'>
-                      <img src={doctor.image} alt='doctor' className='w-20 h-20 mt-5 rounded-full' />
+              <div>
+                {filteredDoctors && filteredDoctors.length > 0 ? (
+                  filteredDoctors.map((doctor) => (
+                    <div key={doctor.id} className='w-[170px] h-60 ml-5 mt-5 bg-slate-800 rounded-lg inline-block'>
+                      <div className='flex justify-center'>
+                        <img src={doctor.image} alt='doctor' className='w-20 h-20 mt-5 rounded-full' />
+                      </div>
+                      <div className='mt-10'>
+                        <h1 className='text-white font-bold text-center text-sm'>{doctor.name}</h1>
+                        <p className='text-white text-sm text-center'>{doctor.department}</p>
+                      </div>
+                      <div className='mt-5 text-right mr-4 text-gray-300'>
+                        <i
+                          className="fa-solid fa-circle-info hover:cursor-pointer hover:text-gray-100"
+                          onClick={() => handleModalToggle(doctor)}
+                        ></i>
+                        <i className="fa-solid fa-trash ml-4 hover:cursor-pointer hover:text-red-400" onClick={() => handleDelete(doctor.id)}></i>
+                        <i className="fa-solid fa-pen-to-square ml-4 hover:cursor-pointer hover:text-gray-100"></i>
+                      </div>
                     </div>
-                    <div className='mt-10'>
-                      <h1 className={`text-white font-bold text-center text-sm`}>{doctor ? doctor.name : 'Loading...'}</h1>
-                      <p className='text-white text-sm text-center'>{doctor.department}</p>
+                  ))
+                ) : (
+                  doctorsList.map((doctor) => (
+                    <div key={doctor.id} className='w-[170px] h-60 ml-5 mt-5 bg-slate-800 rounded-lg inline-block'>
+                      <div className='flex justify-center'>
+                        <img src={doctor.image} alt='doctor' className='w-20 h-20 mt-5 rounded-full' />
+                      </div>
+                      <div className='mt-10'>
+                        <h1 className='text-white font-bold text-center text-sm'>{doctor.name}</h1>
+                        <p className='text-white text-sm text-center'>{doctor.department}</p>
+                      </div>
+                      <div className='mt-5 text-right mr-4 text-gray-300'>
+                        <i
+                          className="fa-solid fa-circle-info hover:cursor-pointer hover:text-gray-100"
+                          onClick={() => handleModalToggle(doctor)}
+                        ></i>
+                        <i className="fa-solid fa-trash ml-4 hover:cursor-pointer hover:text-red-400" onClick={() => handleDelete(doctor.id)}></i>
+                        <i className="fa-solid fa-pen-to-square ml-4 hover:cursor-pointer hover:text-gray-100"></i>
+                      </div>
                     </div>
-                    <div className='mt-5 text-right mr-4 text-gray-300'>
-                      <i className="fa-solid fa-circle-info"></i>
-                      <i onClick={() => handleDelete(doctor.id)} className="fa-solid fa-trash ml-4"></i>
-                      <i className="fa-solid fa-pen-to-square ml-4"></i>
+                  ))
+                )}
+
+                {showModal && selectedDoctor && (
+                  <div className='fixed inset-0 bg-opacity-10 backdrop-blur-lg flex justify-center'>
+                    <div className='mt-20 ml-[100px] h-min w-[400px] flex flex-col gap-3 hover:cursor-pointer text-white bg-gray-800 p-7 rounded-xl'>
+                      <button onClick={handleModalToggle} className='text-right'><i class="fa-solid fa-xmark text-red-400"></i></button>
+                      <img src={selectedDoctor.image} alt='doctor' className='w-24 h-24 rounded-full' />
+                      <h1><span className='font-bold'>Name:</span> {selectedDoctor.name}</h1>
+                      <h1><span className='font-bold'>Address:</span> {selectedDoctor.address}</h1>
+                      <h1><span className='font-bold'>Phone Number:</span> {selectedDoctor.phone}</h1>
+                      <h1><span className='font-bold'>Age: </span>{selectedDoctor.age}</h1>
+                      <h1><span className='font-bold'>Gender:</span> {selectedDoctor.gender}</h1>
+                      <h1><span className='font-bold'>Date of Birth: </span>{selectedDoctor.dob}</h1>
+                      <h1><span className='font-bold'>Lisence:</span> {selectedDoctor.lisence}</h1>
+                      <h1><span className='font-bold'>Department:</span> {selectedDoctor.department}</h1>
+                      <h1><span className='font-bold'>Date of Joining:</span> {selectedDoctor.doj}</h1>
+                      <h1><span className='font-bold'>Salary:</span> {selectedDoctor.salary}</h1>
                     </div>
                   </div>
-                ))
-              }
+                )}
+              </div>
+
             </div>
           </div>
         </div>

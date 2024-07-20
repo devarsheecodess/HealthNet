@@ -192,7 +192,7 @@ const Analytics = () => {
           <h1 className='text-center font-bold text-[#C12A2A] text-2xl'>Upcoming Holidays</h1>
 
           {/* Table */}
-          <div class="relative overflow-x-auto mt-5 max-h-[560px] overflow-auto">
+          <div class="overflow-x-auto mt-5 max-h-[560px] overflow-auto">
             <div class='flex flex-wrap'>
               <table class="w-full text-sm text-left rtl:text-right">
                 <thead class="text-xs text-[#C12A2A] uppercase bg-[#e27979]">
