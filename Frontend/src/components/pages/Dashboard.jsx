@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom'
 import dashIMG from '../../assets/dashboard.png'
 import axios from 'axios'
 import PulseLoader from "react-spinners/PulseLoader";
+import { toast } from 'react-toastify';
 
 const override = {
   display: "block",
@@ -24,6 +25,11 @@ const Dashboard = () => {
 
   let [loading, setLoading] = useState(false);
   let [color, setColor] = useState("#010822");
+
+  const [showPriceModal, setShowPriceModal] = useState(false);
+  const [price, setPrice] = useState(0);
+
+  const [doneID, setDoneID] = useState('')
 
   const { id } = useParams();
 
@@ -78,7 +84,6 @@ const Dashboard = () => {
     }
   };
 
-
   const fetchDoctors = async () => {
     try {
       const parentID = localStorage.getItem('id');
@@ -103,6 +108,58 @@ const Dashboard = () => {
     setTotalDoctors(totalDoctors)
     setTotalPatients(totalPatients)
   }
+
+  const handleDelete = async (id) => {
+    const cf = confirm("Are you sure you want to delete this patient?");
+    if (!cf) return;
+    try {
+      const response = await axios.delete(`http://localhost:3000/patients`, { params: { id } });
+      console.log(response.data);
+
+      toast.success("Patient deleted successfully!");
+    } catch (error) {
+      console.error('Error deleting patient:', error);
+      toast.error('Failed to delete patient. Please try again.');
+    }
+  };
+
+  const handleDone = async (id) => {
+    try {
+      setShowPriceModal(true);
+      setDoneID(id);
+
+    } catch (error) {
+      console.error('Error marking patient as done:', error);
+      toast.error('Failed to mark patient as done. Please try again.');
+    }
+  }
+
+  const submitPrice = async () => {
+    try {
+      // Prepare the data to be sent
+      const year = new Date().getFullYear();
+      const month = new Date().getMonth() + 1; // Months are 0-indexed, so +1
+      const earnings = price;
+      const parentID = localStorage.getItem('id');
+
+      // Post the earnings data
+      const postResponse = await axios.post('http://localhost:3000/earnings', { year, month, earnings, parentID });
+      console.log('Post response:', postResponse.data);
+
+      // Attempt to delete the patient only if posting earnings was successful
+      const deleteResponse = await axios.delete(`http://localhost:3000/patients`, { params: { id: doneID } });
+      console.log('Delete response:', deleteResponse.data);
+
+      // Update UI state only after successful operations
+      setShowPriceModal(false);
+      setPrice(0);
+      setDoneID('');
+      toast.success("Earnings updated and patient released successfully!");
+    } catch (error) {
+      console.error('Error during operations:', error);
+      toast.error('Failed to update earnings or delete patient. Please try again.');
+    }
+  };
 
   useEffect(() => {
     setLoading(true)
@@ -183,7 +240,6 @@ const Dashboard = () => {
                 </th>
               </tr>
             </thead>
-
             <tbody>
               {
                 patientsList.length > 0 ? patientsList.map((patient, index) => (
@@ -198,21 +254,59 @@ const Dashboard = () => {
                     <td className="px-6 py-4 text-gray-600">{patient.doctor}</td>
                     <td className="px-6 py-4 text-gray-600">{patient.issue}</td>
                     <td className="px-6 py-4 text-gray-600">
-                      <a href="#" className="font-medium text-black hover:underline">
-                        <i class="fa-solid fa-trash text-red-800 hover:text-red-500"></i>
-                        <i class="fa-solid fa-circle-check ml-2 text-green-900 hover:text-green-500"></i>
-                      </a>
+                      <i
+                        className="fa-solid fa-trash text-red-800 hover:text-red-500 cursor-pointer"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDelete(patient.id);
+                        }}
+                      ></i>
+                      <i
+                        className="fa-solid fa-circle-check ml-5 text-green-900 hover:text-green-500 cursor-pointer"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDone(patient.id);
+                        }}
+                      ></i>
                     </td>
+
                   </tr>
                 )) : <div className='flex mt-3 ml-6'><p className='text-center text-gray-700 font-medium'>No appointments!</p></div>
               }
-
-
             </tbody>
           </table>
         </div>
 
       </div>
+      {showPriceModal && (
+        <div className='fixed inset-0 flex justify-center items-center backdrop-blur-sm z-50'>
+          <div className='bg-gray-800 text-white p-7 h-60 rounded-xl w-[400px] flex flex-col'>
+            <button type='button' onClick={() => setShowPriceModal(false)} className='text-right items-right'><i class="fa-solid fa-xmark text-red-500"></i></button>
+            <div className='flex flex-col items-center justify-center mt-3'>
+              <h1 className='font-bold mb-3'>Enter the billing amount of the patient</h1>
+              <input
+                className="font-bold text-center mb-3 w-64 p-2 border text-black border-gray-600 rounded"
+                placeholder='Enter the bill of the patient'
+                type="text"
+                value={price}
+                onChange={(e) => setPrice(parseInt(e.target.value))}
+              />
+              <div className="flex gap-4 justify-center">
+                <button
+                  className='bg-blue-700 text-white p-2 rounded-lg w-36'
+                  onClick={() => {
+                    submitPrice();
+                    setShowPriceModal(false);
+                  }}
+                >
+                  Charge Patient
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   )
 }

@@ -11,6 +11,11 @@ const Admissions = () => {
 
   const [search, setSearch] = useState("");
 
+  const [showPriceModal, setShowPriceModal] = useState(false);
+
+  const [priceID, setPriceID] = useState("");
+  const [price, setPrice] = useState(0)
+
   const handleChange = (e) => {
     setAdmissions({ ...admissions, [e.target.name]: e.target.value });
   };
@@ -84,12 +89,62 @@ const Admissions = () => {
     }
   };
 
+  const handleDelete = async (id) => {
+    try {
+      const response = await axios.delete(`http://localhost:3000/admissions`, { params: { id } });
+      console.log(response.data);
+
+      toast.success("Patient deleted successfully!");
+    } catch (error) {
+      console.error('Error deleting patient:', error);
+      toast.error('Failed to delete patient. Please try again.');
+    }
+  };
+
+  const handleEdit = async (id) => {
+    try {
+      const response = await axios.delete(`http://localhost:3000/admissions`, { params: { id } });
+      console.log(response.data);
+
+      setAdmissions({ ...admissionsList.find((patient) => patient.id === id), id });
+      setAdmissionsList(admissionsList.filter((patient) => patient.id !== id));
+    } catch (error) {
+      console.error('Error updating patient:', error);
+      toast.error('Failed to update patient. Please try again.');
+    }
+  };
+
+  const submitPrice = async () => {
+    try {
+      // Prepare the data to be sent
+      const year = new Date().getFullYear();
+      const month = new Date().getMonth() + 1; // Months are 0-indexed, so +1
+      const earnings = price;
+      const parentID = localStorage.getItem('id');
+
+      // Post the earnings data
+      const postResponse = await axios.post('http://localhost:3000/earnings', { year, month, earnings, parentID });
+      console.log('Post response:', postResponse.data);
+
+      // Attempt to delete the patient only if posting earnings was successful
+      const deleteResponse = await axios.delete(`http://localhost:3000/patients`, { params: { id: doneID } });
+      console.log('Delete response:', deleteResponse.data);
+
+      // Update UI state only after successful operations
+      setShowPriceModal(false);
+      setPrice(0);
+      setPriceID('');
+    } catch (error) {
+      console.error('Error during operations:', error);
+    }
+  };
+
   useEffect(() => {
     fetchAdmissions();
-  }, [admissions, admissionsList, filteredAdmissions]);
+  }, []);
 
   return (
-    <div className='bg-[#d0d0d0] min-h-screen'> {/* Change the background color and ensure it covers the full screen height */}
+    <div className='bg-[#d0d0d0] min-h-screen'>
       <div className='pt-6 pb-6 flex gap-7 ml-72'>
         {/* Left */}
         <div className='bg-white w-[576px] h-[650px] rounded-lg overflow-scroll'>
@@ -165,13 +220,11 @@ const Admissions = () => {
             <div>
               <h1 className='text-[#C12A2A] font-bold text-2xl ml-5 mt-5'>Admissions</h1>
             </div>
-            <div className='ml-32 w-80'>
+            <div className='ml-24 mb-5 w-80'>
               <label for="default-search" class="mb-2 w-full text-sm font-medium text-gray-900 dark:text-white">Search</label>
               <div>
-                <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                  <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
-                  </svg>
+                <div class="inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                  <i class="fa-solid fa-magnifying-glass absolute z-10 text-white mt-14"></i>
                 </div>
                 <input type="search" value={search} onChange={handleSearch} id="default-search" class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search for patients" />
               </div>
@@ -181,45 +234,84 @@ const Admissions = () => {
           {/* DISPLAY */}
           <div className='bg-white w-[600px] h-[550px] rounded-lg overflow-y-scroll'>
             <div className='flex flex-wrap justify-start'>
-              {filteredAdmissions && filteredAdmissions.length > 0 ? (
-                filteredAdmissions.map((admission) => (
-                  <div key={admission.id} className='w-[170px] h-min ml-5 mt-5 bg-slate-800 rounded-lg inline-block p-3'>
-                    <div>
-                      <h1 className='text-white text-sm'><span className='font-bold'>Name: </span>{admission.name}</h1>
-                      <h1 className='text-white text-sm'><span className='font-bold'>Address:</span> {admission.address}</h1>
-                      <h1 className='text-white text-sm'><span className='font-bold'>Phone number:</span> {admission.phone}</h1>
-                      <h1 className='text-white text-sm'><span className='font-bold'>Age:</span> {admission.age}</h1>
-                      <h1 className='text-white text-sm'><span className='font-bold'>Gender:</span> {admission.gender}</h1>
-                      <h1 className='text-white text-sm'><span className='font-bold'>Issue:</span> {admission.issue}</h1>
-                      <h1 className='text-white text-sm'><span className='font-bold'>Doctor:</span> {admission.doctor}</h1>
-                      <h1 className='text-white text-sm'><span className='font-bold'>Date: </span>{admission.doa}</h1>
-                      <h1 className='text-white text-sm'><span className='font-bold'>Time: </span>{admission.time}</h1>
+              {
+                filteredAdmissions && filteredAdmissions.length > 0 ? (
+                  filteredAdmissions.map((admission) => (
+                    <div key={admission.id} className='w-[170px] h-min ml-5 mb-5 bg-slate-800 rounded-lg inline-block p-3'>
+                      <div>
+                        <h1 className='text-white text-sm'><span className='font-bold'>Name: </span>{admission.name}</h1>
+                        <h1 className='text-white text-sm'><span className='font-bold'>Address:</span> {admission.address}</h1>
+                        <h1 className='text-white text-sm'><span className='font-bold'>Phone number:</span> {admission.phone}</h1>
+                        <h1 className='text-white text-sm'><span className='font-bold'>Age:</span> {admission.age}</h1>
+                        <h1 className='text-white text-sm'><span className='font-bold'>Gender:</span> {admission.gender}</h1>
+                        <h1 className='text-white text-sm'><span className='font-bold'>Date of birth:</span> {admission.dob}</h1>
+                        <h1 className='text-white text-sm'><span className='font-bold'>Blood Group:</span> {admission.bloodGroup}</h1>
+                        <h1 className='text-white text-sm'><span className='font-bold'>Illness: </span>{admission.reason}</h1>
+                        <h1 className='text-white text-sm'><span className='font-bold'>Date: </span>{admission.dateOfAdmission}</h1>
+                      </div>
+                      <div className='mt-5 text-right text-gray-300'>
+                        <i className="fa-solid fa-trash ml-4 hover:cursor-pointer hover:text-red-400" onClick={() => { setShowPriceModal(true); setPriceID(admission.id) }}></i>
+                        <i className="fa-solid fa-pen-to-square ml-4 hover:cursor-pointer hover:text-gray-100" onClick={() => handleEdit(admission.id)}></i>
+                      </div>
                     </div>
-                    <div className='mt-5 text-right mr-4 text-gray-300'>
+                  ))
+                ) : (
+                  admissionsList.map((admission) => (
+                    <div key={admission.id} className='w-[170px] h-min ml-5 mb-5 bg-slate-800 rounded-lg inline-block p-3'>
+                      <div>
+                        <h1 className='text-white text-sm'><span className='font-bold'>Name: </span>{admission.name}</h1>
+                        <h1 className='text-white text-sm'><span className='font-bold'>Address:</span> {admission.address}</h1>
+                        <h1 className='text-white text-sm'><span className='font-bold'>Phone number:</span> {admission.phone}</h1>
+                        <h1 className='text-white text-sm'><span className='font-bold'>Age:</span> {admission.age}</h1>
+                        <h1 className='text-white text-sm'><span className='font-bold'>Gender:</span> {admission.gender}</h1>
+                        <h1 className='text-white text-sm'><span className='font-bold'>Date of birth:</span> {admission.dob}</h1>
+                        <h1 className='text-white text-sm'><span className='font-bold'>Blood Group:</span> {admission.bloodGroup}</h1>
+                        <h1 className='text-white text-sm'><span className='font-bold'>Illness: </span>{admission.reason}</h1>
+                        <h1 className='text-white text-sm'><span className='font-bold'>Date: </span>{admission.dateOfAdmission}</h1>
+                      </div>
+                      <div className='mt-5 text-right text-gray-300'>
+                        <i className="fa-solid fa-trash ml-4 hover:cursor-pointer hover:text-red-400" onClick={() => { setShowPriceModal(true); setPriceID(admission.id) }}></i>
+                        <i className="fa-solid fa-pen-to-square ml-4 hover:cursor-pointer hover:text-gray-100" onClick={() => handleEdit(admission.id)}></i>
+                      </div>
                     </div>
-                  </div>
-                ))
-              ) : (
-                admissionsList.map((admission) => (
-                  <div key={admission.id} className='w-[170px] h-min ml-5 mt-5 bg-slate-800 rounded-lg inline-block p-3'>
-                    <div>
-                      <h1 className='text-white text-sm'><span className='font-bold'>Name: </span>{admission.name}</h1>
-                      <h1 className='text-white text-sm'><span className='font-bold'>Address:</span> {admission.address}</h1>
-                      <h1 className='text-white text-sm'><span className='font-bold'>Phone number:</span> {admission.phone}</h1>
-                      <h1 className='text-white text-sm'><span className='font-bold'>Age:</span> {admission.age}</h1>
-                      <h1 className='text-white text-sm'><span className='font-bold'>Gender:</span> {admission.gender}</h1>
-                      <h1 className='text-white text-sm'><span className='font-bold'>Issue:</span> {admission.issue}</h1>
-                      <h1 className='text-white text-sm'><span className='font-bold'>Doctor:</span> {admission.doctor}</h1>
-                      <h1 className='text-white text-sm'><span className='font-bold'>Date: </span>{admission.doa}</h1>
-                      <h1 className='text-white text-sm'><span className='font-bold'>Time: </span>{admission.time}</h1>
-                    </div>
-                  </div>
-                ))
-              )}
+                  ))
+                )}
             </div>
           </div>
         </div>
       </div>
+
+      {showPriceModal && (
+        <div className='fixed inset-0 flex justify-center items-center backdrop-blur-sm z-50'>
+          <div className='bg-gray-800 text-white p-7 h-60 rounded-xl w-[400px] flex flex-col'>
+            <button type='button' onClick={() => setShowPriceModal(false)} className='text-right items-right'><i class="fa-solid fa-xmark text-red-500"></i></button>
+            <div className='flex flex-col items-center justify-center mt-3'>
+              <h1 className='font-bold mb-3'>Enter the billing amount of the patient</h1>
+              <input
+                className="font-bold text-center mb-3 w-64 p-2 border text-black border-gray-600 rounded"
+                placeholder='Enter the bill of the patient'
+                type="text"
+                value={price}
+                onChange={(e) => setPrice(parseInt(e.target.value))}
+              />
+              <div className="flex gap-4 justify-center">
+                <button
+                  className='bg-blue-700 text-white p-2 rounded-lg w-36'
+                  onClick={() => {
+                    handleDelete(priceID);
+                    submitPrice(price);
+                    setShowPriceModal(false);
+                    setPrice(0);
+                    setPriceID("");
+                  }}
+                >
+                  Charge Patient
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

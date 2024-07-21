@@ -38,7 +38,7 @@ const Patients = () => {
       });
 
       const updatedPatientsList = [...patientsList, response.data];
-      setDoctorsList(updatedPatientsList);
+      setPatientsList(updatedPatientsList);
       console.log(updatedPatientsList);
       console.log(response.data);
 
@@ -92,10 +92,23 @@ const Patients = () => {
     }
   };
 
+  const handleEdit = async (id) => {
+    try {
+      const response = await axios.delete(`http://localhost:3000/patients`, { params: { id } });
+      console.log(response.data);
+
+      setPatients({ ...patientsList.find((patient) => patient.id === id), id });
+      setPatientsList(patientsList.filter((patient) => patient.id !== id));
+    } catch (error) {
+      console.error('Error updating patient:', error);
+      toast.error('Failed to update patient. Please try again.');
+    }
+  };
+
   useEffect(() => {
     fetchDoctors();
     fetchPatients();
-  }, [doctorsList, patientsList, patients]);
+  }, []);
 
   return (
     <div className='bg-[#d0d0d0] min-h-screen'> {/* Change the background color and ensure it covers the full screen height */}
@@ -184,10 +197,8 @@ const Patients = () => {
             <div className='ml-32 w-80'>
               <label for="default-search" class="mb-2 w-full text-sm font-medium text-gray-900 dark:text-white">Search</label>
               <div>
-                <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                  <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
-                  </svg>
+                <div class="inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                  <i class="fa-solid fa-magnifying-glass text-white absolute z-10 mt-14"></i>
                 </div>
                 <input type="search" value={search} onChange={handleSearch} id="default-search" class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search for patients" />
               </div>
@@ -211,7 +222,8 @@ const Patients = () => {
                       <h1 className='text-white text-sm'><span className='font-bold'>Date: </span>{patient.doa}</h1>
                       <h1 className='text-white text-sm'><span className='font-bold'>Time: </span>{patient.time}</h1>
                     </div>
-                    <div className='mt-5 text-right mr-4 text-gray-300'>
+                    <div className='mt-5 text-right text-gray-300'>
+                      <i className="fa-solid fa-pen-to-square hover:cursor-pointer hover:text-gray-100" onClick={() => handleEdit(patient.id)}></i>
                     </div>
                   </div>
                 ))
@@ -228,6 +240,9 @@ const Patients = () => {
                       <h1 className='text-white text-sm'><span className='font-bold'>Doctor:</span> {patient.doctor}</h1>
                       <h1 className='text-white text-sm'><span className='font-bold'>Date: </span>{patient.doa}</h1>
                       <h1 className='text-white text-sm'><span className='font-bold'>Time: </span>{patient.time}</h1>
+                    </div>
+                    <div className='mt-5 text-right text-gray-300'>
+                      <i className="fa-solid fa-pen-to-square hover:cursor-pointer hover:text-gray-100" onClick={() => handleEdit(patient.id)}></i>
                     </div>
                   </div>
                 ))

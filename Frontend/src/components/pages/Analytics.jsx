@@ -10,17 +10,6 @@ const override = {
   borderColor: "red",
 };
 
-const earningsData = {
-  labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-  datasets: [{
-    label: 'Monthly Earnings',
-    data: [312000, 193000, 17000, 322000, 150300, 230300, 200300, 138000, 210300, 193000, 230300, 230000],
-    backgroundColor: '#010822',
-    borderColor: '#010822',
-    borderWidth: 1,
-  }],
-};
-
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 const EarningsChart = ({ data }) => {
@@ -47,12 +36,52 @@ const Analytics = () => {
 
   const [total, setTotal] = useState("");
 
+  const [earningsData, setEarningsData] = useState({
+    labels: [],
+    datasets: [{
+      label: 'Monthly Earnings',
+      data: [],
+      backgroundColor: '#010822',
+      borderColor: '#010822',
+      borderWidth: 1,
+    }],
+  });
+
+  const fetchEarningsData = async () => {
+    try {
+      const year = new Date().getFullYear();
+      const parentID = localStorage.getItem('id');
+      const response = await axios.get('http://localhost:3000/earnings', {
+        params: { year, parentID }
+      });
+
+      const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+      const earnings = new Array(12).fill(0);
+
+      response.data.forEach(entry => {
+        const { month, earnings: amount } = entry;
+        earnings[month - 1] = amount;
+      });
+
+      setEarningsData({
+        labels: months,
+        datasets: [{
+          label: 'Monthly Earnings',
+          data: earnings,
+          backgroundColor: '#010822',
+          borderColor: '#010822',
+          borderWidth: 1,
+        }],
+      });
+    } catch (error) {
+      console.error('Error fetching earnings data:', error);
+    }
+  };
+
   const fetchAdmisions = async () => {
     try {
-      // Retrieve parentID from local storage
       const parentID = localStorage.getItem('id');
 
-      // Fetch admissions for the specific parentID
       const response = await axios.get('http://localhost:3000/admissions', {
         params: { parentID }
       });
@@ -91,15 +120,12 @@ const Analytics = () => {
     try {
       const parentID = localStorage.getItem('id');
 
-      // Fetch patients with parentID as a query parameter
       const response = await axios.get("http://localhost:3000/patients", { params: { parentID } });
       const patients = response.data;
 
-      // Filter patients based on gender
       const malePatients = patients.filter(patient => patient.gender.toLowerCase() === "male");
       const femalePatients = patients.filter(patient => patient.gender.toLowerCase() === "female");
 
-      // Update the state with the filtered lists
       setMalePatients(malePatients);
       setFemalePatients(femalePatients);
     } catch (error) {
@@ -146,6 +172,7 @@ const Analytics = () => {
   }
 
   useEffect(() => {
+    fetchEarningsData();
     getHolidays();
   }, [])
 
@@ -240,4 +267,4 @@ const Analytics = () => {
   )
 }
 
-export default Analytics
+export default Analytics;

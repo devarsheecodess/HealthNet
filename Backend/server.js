@@ -5,6 +5,9 @@ const model = require("./models/User");
 const docModel = require("./models/Doctors");
 const patModel = require("./models/Patients");
 const addModel = require("./models/Admissions");
+const Earnings = require("./models/Earnings");
+const cron = require("node-cron");
+const { MongoClient } = require("mongodb");
 
 const app = express();
 app.use(express.json());
@@ -49,6 +52,8 @@ app.post("/login", (req, res) => {
     });
 });
 
+// DOCTORS
+
 //Add Doctors
 app.post("/doctors", (req, res) => {
   docModel
@@ -68,6 +73,18 @@ app.get("/doctors", (req, res) => {
     .then((doctors) => res.json(doctors))
     .catch((err) => res.status(500).json({ error: err.message }));
 });
+
+//Delete Doctors
+app.delete("/doctors", (req, res) => {
+  const { id } = req.query;
+
+  docModel
+    .deleteOne({ id: id })
+    .then((doctors) => res.json(doctors))
+    .catch((err) => res.json(err));
+});
+
+// PATIENTS
 
 //Add Patients
 app.post("/patients", (req, res) => {
@@ -92,6 +109,18 @@ app.get("/patients", (req, res) => {
     });
 });
 
+//Delete Patients
+app.delete("/patients", (req, res) => {
+  const { id } = req.query;
+
+  patModel
+    .deleteOne({ id: id })
+    .then((patients) => res.json(patients))
+    .catch((err) => res.json(err));
+});
+
+// ADMISSIONS
+
 // Add Admissions
 app.post("/admissions", (req, res) => {
   addModel
@@ -108,6 +137,84 @@ app.get("/admissions", (req, res) => {
     .find({ parentID })
     .then((admissions) => res.json(admissions))
     .catch((err) => res.json(err));
+});
+
+//Delete Admissions
+app.delete("/admissions", (req, res) => {
+  const { id } = req.query;
+
+  addModel
+    .deleteOne({ id: id })
+    .then((admissions) => res.json(admissions))
+    .catch((err) => res.json(err));
+});
+
+// EARNINGS
+
+// Update Monthly Earnings
+app.post("/earnings", async (req, res) => {
+  const { year, month, earnings, parentID } = req.body;
+
+  if (
+    typeof year !== "number" ||
+    typeof month !== "number" ||
+    typeof earnings !== "number" ||
+    !parentID
+  ) {
+    return res.status(400).send("Invalid input data");
+  }
+
+  try {
+    // Find an existing record for the specified year, month, and parentID
+    const existingRecord = await Earnings.findOne({ year, month, parentID });
+
+    if (existingRecord) {
+      // Update the existing record by adding the new earnings
+      existingRecord.earnings += earnings;
+      await existingRecord.save();
+    } else {
+      // Create a new record if none exists
+      const newEarnings = new Earnings({ year, month, earnings, parentID });
+      await newEarnings.save();
+    }
+
+    res.status(200).send("Earnings updated successfully");
+  } catch (error) {
+    console.error("Error updating earnings:", error);
+    res.status(500).send("Internal server error");
+  }
+});
+
+// Get Earnings
+app.get("/earnings", async (req, res) => {
+  const { year, parentID } = req.query;
+
+  if (!year || !parentID) {
+    return res.status(400).send("Year and parentID are required");
+  }
+
+  try {
+    const earningsData = await Earnings.find({ year, parentID });
+
+    if (earningsData.length === 0) {
+      return res.status(404).send("No earnings data found");
+    }
+
+    res.status(200).json(earningsData);
+  } catch (error) {
+    console.error("Error fetching earnings data:", error);
+    res.status(500).send("Internal server error");
+  }
+});
+
+// Reset Earnings at the start of each year
+cron.schedule("0 0 1 1 *", async () => {
+  try {
+    await Earnings.deleteMany({});
+    console.log("Earnings data reset for the new year");
+  } catch (error) {
+    console.error("Error resetting earnings data", error);
+  }
 });
 
 app.listen(3000, () => {
