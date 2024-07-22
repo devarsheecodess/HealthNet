@@ -21,7 +21,10 @@ const Patients = () => {
         params: { parentID }
       });
 
-      setDoctorsList(response.data);
+      // Filter doctors by status
+      const activeDoctors = response.data.filter(doctor => doctor.status === 'Active');
+
+      setDoctorsList(activeDoctors);
     } catch (error) {
       console.error('Error fetching doctors:', error);
     }

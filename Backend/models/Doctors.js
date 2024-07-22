@@ -14,6 +14,7 @@ const doctorSchema = new mongoose.Schema({
   department: "String",
   doj: "String",
   salary: "String",
+  status: {type: "String", default: "Active"},
 });
 
 const Doctor = mongoose.model("Doctor", doctorSchema);

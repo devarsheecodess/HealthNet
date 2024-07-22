@@ -16,22 +16,34 @@ const News = () => {
 
     const fetchNews = async () => {
         try {
-            setLoading(true)
+            setLoading(true);
             const today = new Date();
             const lastWeek = new Date();
             lastWeek.setDate(today.getDate() - 7);
-            const API_KEY = "502d2b6968a34771ab5c58c2b2d6cf89"
-            const response = await fetch(
-                `https://newsapi.org/v2/everything?q=hospitals&from=${lastWeek.toISOString()}&to=${today.toISOString()}&sortBy=publishedAt&apiKey=${API_KEY}`
-            );
-            const data = await response.json()
-            setData(data.articles)
-            console.log(data)
-            setLoading(false)
+    
+            const API_KEY = import.meta.env.VITE_API_KEY;
+            console.log("Using API Key:", API_KEY);
+    
+            // Use the proxy path `/api`
+            const url = `/api/v2/everything?q=hospitals&from=${lastWeek.toISOString()}&to=${today.toISOString()}&sortBy=publishedAt&apiKey=${API_KEY}`;
+            console.log("Fetching news from URL:", url);
+    
+            const response = await fetch(url);
+    
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+    
+            const data = await response.json();
+            console.log("Fetched Data:", data);
+            setData(data.articles);
         } catch (error) {
-            alert("Failed to fetch news")
+            console.error("Failed to fetch news:", error);
+            alert("Failed to fetch news");
+        } finally {
+            setLoading(false);
         }
-    }
+    };    
 
     useEffect(() => {
         fetchNews()

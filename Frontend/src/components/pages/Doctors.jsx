@@ -234,6 +234,9 @@ const Doctors = () => {
                     <option selected>Choose the department</option>
                     <option value="Emergency Medicine">Emergency Medicine</option>
                     <option value="Cardiology">Cardiology</option>
+                    <option value="Dermatologist">Dermatologist</option>
+                    <option value="Pediatrician">Pediatrician</option>
+                    <option value="Nephrology">Nephrology</option>
                     <option value="Orthopedics">Orthopedics</option>
                     <option value="Neurology">Neurology</option>
                     <option value="Oncology">Oncology</option>

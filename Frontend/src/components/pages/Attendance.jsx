@@ -7,6 +7,8 @@ const Attendance = () => {
   const [search, setSearch] = useState('');
   const [filteredDoctors, setFilteredDoctors] = useState([]);
 
+  const [status, setStatus] = useState("");
+
   const fetchDoctors = async () => {
     try {
       const parentID = localStorage.getItem('id');
@@ -43,12 +45,34 @@ const Attendance = () => {
     }
   };
 
+  const handleStatusChange = async (id) => {
+    try {
+      const response = await axios.put(`http://localhost:3000/doctors`, {
+        id,
+        status
+      });
+      console.log(response.data);
+
+      if (response.status === 200) {
+        toast.success('Doctor status updated successfully');
+      }
+    } catch (error) {
+      console.error('Error updating doctor status:', error);
+      toast.error('Failed to update doctor status');
+    }
+  };
+
+
+  const handleChange = (e) => {
+    setStatus(e.target.value);
+  }
+
   useEffect(() => {
     fetchDoctors();
   }, []);
 
   return (
-    <div className='bg-[#d0d0d0] min-h-screen'> {/* Change the background color and ensure it covers the full screen height */}
+    <div className='bg-[#d0d0d0] min-h-screen'>
       <div className='pt-6 pb-6 flex flex-col ml-72'>
         <div className='flex flex-col bg-white w-[1220px] h-[650px] rounded-xl'>
           {/* TOP */}
@@ -62,6 +86,7 @@ const Attendance = () => {
                 </div>
                 <input type="search" value={search} onChange={handleSearch} id="default-search" class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search for doctors" required />
               </div>
+
             </div>
           </div>
 
@@ -73,13 +98,20 @@ const Attendance = () => {
                   <div className='flex bg-black w-[270px] h-72 rounded-xl flex-col items-center justify-center'>
                     <img src={doctor.image} alt='doctor' className='w-32 h-32 bg-white self-center rounded-full mb-3' />
                     <h1 className='text-white font-bold text-lg'>{doctor.name.slice(0, 3) == "Dr." ? "" : "Dr. "}{doctor.name}</h1>
+                    {
+                      doctor.status === "Active" ? (
+                        <p className='text-green-400'>Active</p>
+                      ) : (
+                        <p className='text-red-400'>Inactive</p>
+                      )
+                    }
                     <div className='flex gap-4 items-center justify-center'>
-                      <select id="status" class="bg-gray-50 border border-gray-300 text-gray-900 mt-5 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block w-24 p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                      <select id="genders" name='gender' onChange={handleChange} class="mt-5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                         <option selected>Status</option>
-                        <option value="Inactive">Inactive<i className="fa-solid fa-circle text-red-500"></i></option>
-                        <option value="Active">Active<i className="fa-solid fa-circle text-green-500"></i></option>
+                        <option value="Inactive">Inactive</option>
+                        <option value="Active">Active</option>
                       </select>
-                      <button className='bg-transparent'><i className="fa-solid fa-circle-check mt-5 text-2xl text-green-400"></i></button>
+                      <button className='bg-transparent' onClick={() => handleStatusChange(doctor.id)}><i className="fa-solid fa-circle-check mt-5 text-2xl text-green-400"></i></button>
                     </div>
                   </div>
                 ))
@@ -88,13 +120,20 @@ const Attendance = () => {
                   <div className='flex bg-black w-[270px] h-72 rounded-xl flex-col items-center justify-center'>
                     <img src={doctor.image} alt='doctor' className='w-32 h-32 bg-white self-center rounded-full mb-3' />
                     <h1 className='text-white font-bold text-lg'>{doctor.name.slice(0, 3) == "Dr." ? "" : "Dr. "}{doctor.name}</h1>
+                    {
+                      doctor.status === "Active" ? (
+                        <p className='text-green-400 font-bold'>Active</p>
+                      ) : (
+                        <p className='text-red-400 font-bold'>Inactive</p>
+                      )
+                    }
                     <div className='flex gap-4 items-center justify-center'>
-                      <select id="status" class="bg-gray-50 border border-gray-300 text-gray-900 mt-5 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block w-24 p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                      <select id="genders" name='gender' onChange={handleChange} class="mt-5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                         <option selected>Status</option>
-                        <option value="Inactive">Inactive<i className="fa-solid fa-circle text-red-500"></i></option>
-                        <option value="Active">Active<i className="fa-solid fa-circle text-green-500"></i></option>
+                        <option value="Inactive">Inactive</option>
+                        <option value="Active">Active</option>
                       </select>
-                      <button className='bg-transparent'><i className="fa-solid fa-circle-check mt-5 text-2xl text-green-400"></i></button>
+                      <button className='bg-transparent' onClick={() => handleStatusChange(doctor.id)}><i className="fa-solid fa-circle-check mt-5 text-2xl text-green-400"></i></button>
                     </div>
                   </div>
                 ))

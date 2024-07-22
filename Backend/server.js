@@ -8,12 +8,24 @@ const addModel = require("./models/Admissions");
 const Earnings = require("./models/Earnings");
 const cron = require("node-cron");
 const { MongoClient } = require("mongodb");
+const dotenv = require("dotenv");
+dotenv.config();
 
 const app = express();
 app.use(express.json());
 app.use(cors());
 
-mongoose.connect("mongodb://localhost:27017/healthNetDB");
+const mongoURI = process.env.MONGO_URI;
+mongoose.connect(mongoURI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+.then(() => {
+  console.log('MongoDB connected successfully');
+})
+.catch((err) => {
+  console.error('MongoDB connection error:', err);
+});
 
 //Signup Page
 app.post("/signup", (req, res) => {
@@ -80,6 +92,18 @@ app.delete("/doctors", (req, res) => {
 
   docModel
     .deleteOne({ id: id })
+    .then((doctors) => res.json(doctors))
+    .catch((err) => res.json(err));
+});
+
+//Update status of doctors
+app.put("/doctors", (req, res) => {
+  const { id, status } = req.body;
+
+  docModel
+    .findOneAndUpdate({ id: id }, {
+      status: status
+    })
     .then((doctors) => res.json(doctors))
     .catch((err) => res.json(err));
 });
