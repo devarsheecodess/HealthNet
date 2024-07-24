@@ -50,7 +50,7 @@ const News = () => {
 
     return (
         <div className='bg-[#d0d0d0] min-h-screen'>
-            <div className='pt-10 pb-6 flex flex-col ml-72'>
+            <div className='pt-10 pb-6 flex flex-col md:ml-72'>
                 <h1 className='text-[#C12A2A] font-bold text-2xl ml-5 mb-5'>Latest News</h1>
                 <section className="text-gray-600 body-font">
                     <div className="container px-5 mx-auto">

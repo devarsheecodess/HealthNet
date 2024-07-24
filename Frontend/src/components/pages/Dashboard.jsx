@@ -191,125 +191,89 @@ const Dashboard = () => {
         cssOverride={override}
         size={15}
       />
-      <div className='pt-6 pb-6 flex flex-col ml-72'>
+      <div className='pt-6 pb-6 flex flex-col ml-6 mr-6 md:ml-12 lg:ml-72'>
         {/* Top part */}
-        <div className='flex gap-9'>
-          <div className='w-[470px] h-[149px] flex  items-center bg-white rounded-lg'>
-            <div className='ml-7 mr-20'>
+        <div className='flex flex-wrap gap-4 justify-center md:justify-start'>
+          <div className='flex items-center bg-white rounded-lg p-4 w-full md:w-auto md:flex-1'>
+            <div className='flex-grow'>
               <h1 className='text-black font-bold mt-1 text-xl'>{greeting} {admin}</h1>
               <h5 className='font-semibold mt-6 text-sm'>{date}</h5>
               <h5 className='text-[#C12A2A] font-bold text-lg'>{time}</h5>
             </div>
-
             {/* Image div */}
             <div>
               <img src={dashIMG} alt='Dashboard' className='w-[130px] h-[130px] rounded-lg' />
             </div>
           </div>
-          <div className='w-[341px] h-[149px] flex flex-col items-center justify-center bg-white rounded-lg'>
-            <h1 className='text-black font-bold mt-7 text-xl'>Total Appointments</h1>
+          <div className='flex flex-col items-center justify-center bg-white rounded-lg p-4 w-full md:w-auto md:flex-1'>
+            <h1 className='text-black font-bold text-xl'>Total Appointments</h1>
             <h3 className='m-6 font-bold text-[#C12A2A] text-2xl'>{totalPatients}</h3>
           </div>
-          <div className=' w-[341px] h-[149px] flex flex-col items-center justify-center bg-white rounded-lg'>
-            <h1 className='text-black font-bold mt-7 text-xl'>Total Doctors</h1>
+          <div className='flex flex-col items-center justify-center bg-white rounded-lg p-4 w-full md:w-auto md:flex-1'>
+            <h1 className='text-black font-bold text-xl'>Total Doctors</h1>
             <h3 className='m-6 font-bold text-[#C12A2A] text-2xl'>{totalDoctors}</h3>
           </div>
         </div>
 
-        {/* Table*/}
-        <div className=" overflow-x-auto shadow-md sm:rounded-lg mt-10 w-[1225px] h-[455px] bg-white overflow-y-auto">
-          <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-            <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-[#03071C] dark:text-gray-400 top-0">
+        {/* Table */}
+        <div className="overflow-x-auto shadow-md sm:rounded-lg mt-10 bg-white">
+          <table className="w-full text-sm text-left rtl:text-right text-gray-500">
+            <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-[#03071C] dark:text-gray-400">
               <tr>
-                <th scope="col" className="px-6 py-3">
-                  Patients
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  Date
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  Time
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  Doctor
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  Issue
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  Actions
-                </th>
+                <th scope="col" className="px-6 py-3">Patients</th>
+                <th scope="col" className="px-6 py-3">Date</th>
+                <th scope="col" className="px-6 py-3">Time</th>
+                <th scope="col" className="px-6 py-3">Doctor</th>
+                <th scope="col" className="px-6 py-3">Issue</th>
+                <th scope="col" className="px-6 py-3">Actions</th>
               </tr>
             </thead>
             <tbody>
-              {
-                patientsList.length > 0 ? patientsList.map((patient, index) => (
-                  <tr className="odd:bg-white  even:bg-gray-50 even:dark:bg-gray-300 border-b">
-                    <th scope="row" className="px-6 py-4 text-gray-600 font-medium  whitespace-nowrap">
-                      {patient.name}
-                    </th>
-                    <th scope="row" className="px-6 py-4 text-gray-600 font-medium  whitespace-nowrap" >
-                      {patient.doa}
-                    </th>
-                    <td className="px-6 py-4 text-gray-600">{patient.time}</td>
-                    <td className="px-6 py-4 text-gray-600">{patient.doctor}</td>
-                    <td className="px-6 py-4 text-gray-600">{patient.issue}</td>
-                    <td className="px-6 py-4 text-gray-600">
-                      <i
-                        className="fa-solid fa-trash text-red-800 hover:text-red-500 cursor-pointer"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDelete(patient.id);
-                        }}
-                      ></i>
-                      <i
-                        className="fa-solid fa-circle-check ml-5 text-green-900 hover:text-green-500 cursor-pointer"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDone(patient.id);
-                        }}
-                      ></i>
-                    </td>
-
-                  </tr>
-                )) : <div className='flex mt-3 ml-6'><p className='text-center text-gray-700 font-medium'>No appointments!</p></div>
-              }
+              {patientsList.length > 0 ? patientsList.map((patient, index) => (
+                <tr className="odd:bg-white even:bg-gray-50 even:dark:bg-gray-300 border-b">
+                  <th scope="row" className="px-6 py-4 text-gray-600 font-medium whitespace-nowrap">{patient.name}</th>
+                  <td className="px-6 py-4 text-gray-600">{patient.doa}</td>
+                  <td className="px-6 py-4 text-gray-600">{patient.time}</td>
+                  <td className="px-6 py-4 text-gray-600">{patient.doctor}</td>
+                  <td className="px-6 py-4 text-gray-600">{patient.issue}</td>
+                  <td className="px-6 py-4 text-gray-600">
+                    <i className="fa-solid fa-trash text-red-800 hover:text-red-500 cursor-pointer" onClick={(e) => handleDelete(patient.id)}></i>
+                    <i className="fa-solid fa-circle-check ml-5 text-green-900 hover:text-green-500 cursor-pointer" onClick={(e) => handleDone(patient.id)}></i>
+                  </td>
+                </tr>
+              )) : <div className='flex justify-center'><p className='text-center text-gray-700 font-medium'>No appointments!</p></div>}
             </tbody>
           </table>
         </div>
-
       </div>
       {showPriceModal && (
         <div className='fixed inset-0 flex justify-center items-center backdrop-blur-sm z-50'>
-          <div className='bg-gray-800 text-white p-7 h-60 rounded-xl w-[400px] flex flex-col'>
-            <button type='button' onClick={() => setShowPriceModal(false)} className='text-right items-right'><i class="fa-solid fa-xmark text-red-500"></i></button>
-            <div className='flex flex-col items-center justify-center mt-3'>
-              <h1 className='font-bold mb-3'>Enter the billing amount of the patient</h1>
-              <input
-                className="font-bold text-center mb-3 w-64 p-2 border text-black border-gray-600 rounded"
-                placeholder='Enter the bill of the patient'
-                type="text"
-                value={price}
-                onChange={(e) => setPrice(parseInt(e.target.value))}
-              />
-              <div className="flex gap-4 justify-center">
-                <button
-                  className='bg-blue-700 text-white p-2 rounded-lg w-36'
-                  onClick={() => {
-                    submitPrice();
-                    setShowPriceModal(false);
-                  }}
-                >
-                  Charge Patient
-                </button>
-              </div>
+          <div className='bg-gray-800 text-white p-7 rounded-xl flex flex-col items-center'>
+            <button type='button' onClick={() => setShowPriceModal(false)} className='self-end'><i className="fa-solid fa-xmark text-red-500"></i></button>
+            <h1 className='font-bold mb-3'>Enter the billing amount of the patient</h1>
+            <input
+              className="font-bold text-center mb-3 w-64 p-2 border text-black border-gray-600 rounded"
+              placeholder='Enter the bill of the patient'
+              type="text"
+              value={price}
+              onChange={(e) => setPrice(parseInt(e.target.value))}
+            />
+            <div className="flex gap-4">
+              <button
+                className='bg-blue-700 text-white p-2 rounded-lg'
+                onClick={() => {
+                  submitPrice();
+                  setShowPriceModal(false);
+                }}
+              >
+                Charge Patient
+              </button>
             </div>
           </div>
         </div>
       )}
-
     </div>
-  )
+  );
 }
 
 export default Dashboard

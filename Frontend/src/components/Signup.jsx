@@ -83,11 +83,7 @@ const Signup = () => {
         href="#"
         class="flex items-center mb-6 text-2xl font-semibold text-[#C12A2A]"
       >
-        <img
-          class="w-8 h-8 mr-2"
-          src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/logo.svg"
-          alt="logo"
-        ></img>
+        <i class="fa-solid fa-house-medical fa-lg mr-2 text-[#d73737]"></i>
         HealthNet
       </a>
       <div className="px-8 py-6 mt-4 text-left bg-gray-800 shadow-lg rounded-lg">

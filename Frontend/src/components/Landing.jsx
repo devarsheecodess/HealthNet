@@ -48,11 +48,7 @@ const Landing = () => {
         <nav className="border-gray-200 px-4 lg:px-6 py-2.5 bg-[#03071C]">
           <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
             <a onClick={handleLogo} className="flex items-center">
-              <img
-                src="https://flowbite.com/docs/images/logo.svg"
-                className="mr-3 h-6 sm:h-9"
-                alt="Flowbite Logo"
-              />
+              <i class="fa-solid fa-house-medical fa-lg mr-2 text-[#d73737]"></i>
               <span className="self-center text-xl font-bold whitespace-nowrap dark:text-white cursor-pointer">
                 Health<span className="text-[#C12A2A]">Net</span>
               </span>
@@ -510,11 +506,7 @@ const Landing = () => {
           <div className="md:flex md:justify-between">
             <div className="mb-6 md:mb-0">
               <a onClick={scrollToTop} className="flex items-center">
-                <img
-                  src="https://flowbite.com/docs/images/logo.svg"
-                  class="h-8 me-3"
-                  alt="FlowBite Logo"
-                />
+                <i class="fa-solid fa-house-medical fa-lg mr-2 text-[#d73737]"></i>
                 <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white cursor-pointer">
                   Health<span class="text-[#C12A2A]">Net</span>
                 </span>
@@ -527,13 +519,14 @@ const Landing = () => {
                 </h2>
                 <ul className="text-gray-500 dark:text-gray-400 font-medium">
                   <li className="mb-4">
-                    <a href="https://flowbite.com/" className="hover:underline">
+                    <a onClick={()=>alert("Subscription model is not yet launched!")} className="hover:underline cursor-pointer">
                       HealthNet Pro
                     </a>
                   </li>
                   <li>
                     <a
-                      href="https://tailwindcss.com/"
+                      href="https://github.com/devarsheecodess"
+                      target="_blank"
                       className="hover:underline"
                     >
                       Developer
@@ -572,7 +565,7 @@ const Landing = () => {
                 </h2>
                 <ul className="text-gray-500 dark:text-gray-400 font-medium">
                   <li className="mb-4">
-                    <a href="#" className="hover:underline">
+                    <a href="/" className="hover:underline">
                       Privacy Policy
                     </a>
                   </li>

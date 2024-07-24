@@ -116,9 +116,9 @@ const Patients = () => {
 
   return (
     <div className='bg-[#d0d0d0] min-h-screen'> {/* Change the background color and ensure it covers the full screen height */}
-      <div className='pt-6 pb-6 flex gap-7 ml-72'>
+      <div className='pt-6 pb-6 flex flex-col gap-7 md:ml-72 ml-5 mr-5 md:flex-row'>
         {/* Left */}
-        <div className='bg-white w-[576px] h-[650px] rounded-lg overflow-scroll'>
+        <div className='bg-white md:w-[576px] h-[650px] rounded-lg overflow-scroll'>
           <h1 className='text-[#C12A2A] font-bold text-2xl ml-5 mt-5'>Add Patient</h1>
           <form class="max-w-sm ml-5 mt-5">
             <div className='flex'>
@@ -192,7 +192,7 @@ const Patients = () => {
         </div>
 
         {/* Right */}
-        <div className='bg-white w-[616px] h-[650px] rounded-lg'>
+        <div className='bg-white md:w-[616px] h-[650px] rounded-lg'>
           {/* TOP */}
           <div className='flex'>
             <div>
@@ -210,7 +210,7 @@ const Patients = () => {
           </div>
 
           {/* DISPLAY */}
-          <div className='bg-white w-[600px] h-[550px] rounded-lg overflow-y-scroll'>
+          <div className='bg-white md:w-[600px] h-[550px] rounded-lg overflow-y-scroll'>
             <div className='flex flex-wrap justify-start'>
               {filteredPatients && filteredPatients.length > 0 ? (
                 filteredPatients.map((patient) => (

@@ -47,6 +47,8 @@ const Analytics = () => {
     }],
   });
 
+  const URL = import.meta.env.VITE_BACKEND_URL;
+
   const fetchEarningsData = async () => {
     try {
       const year = new Date().getFullYear();
@@ -182,9 +184,9 @@ const Analytics = () => {
   }, [admissionsList, patientsList, total, male, female])
 
   return (
-    <div className='bg-[#d0d0d0] min-h-screen flex'>
+    <div className='bg-[#d0d0d0] min-h-screen flex flex-col md:flex-row'>
       {/* Left */}
-      <div className='pt-6 pb-6 flex flex-col ml-72'>
+      <div className='pt-6 pb-6 flex flex-col md:ml-72 ml-5 mr-5'>
         {/* Graph */}
         <div>
           <div className='bg-white p-5 rounded-lg'>
@@ -196,7 +198,7 @@ const Analytics = () => {
         </div>
 
         {/* Total Patients*/}
-        <div className='flex flex-col mt-5 items-center w-[590px] h-[285px] bg-white rounded-xl'>
+        <div className='flex flex-col mt-5 items-center md:w-[590px] h-[285px] bg-white rounded-xl'>
           <h1 className='mt-10 font-bold text-[#C12A2A] text-2xl'>Total Active Patients</h1>
           <h5 className='font-medium text-2xl mt-5 text-center'>{total}</h5>
           <div className='flex gap-40 mt-16'>
@@ -215,7 +217,7 @@ const Analytics = () => {
 
       {/* Right */}
       <div>
-        <div className='bg-white w-[580px] h-[650px] mt-5 ml-10 rounded-lg p-5'>
+        <div className='bg-white md:w-[580px] h-[650px] mt-5 md:ml-6 ml-5 mr-5 rounded-lg p-5'>
           <h1 className='text-center font-bold text-[#C12A2A] text-2xl'>Upcoming Holidays</h1>
 
           {/* Table */}
@@ -250,7 +252,7 @@ const Analytics = () => {
                             {holiday.name}
                           </th>
                           <td class="px-6 py-4 text-white">
-                            {holiday.date.iso}
+                            {holiday.date.iso.slice(0, 10)}
                           </td>
                         </tr>
                       )

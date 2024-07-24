@@ -169,23 +169,23 @@ const Doctors = () => {
   }, [doctors, doctorsList, filteredDoctors]);
 
   return (
-    <div className='bg-[#d0d0d0] min-h-screen'> {/* Change the background color and ensure it covers the full screen height */}
-      <div className='pt-6 pb-6 flex gap-7 ml-72'>
+    <div className='bg-[#d0d0d0] min-h-screen'> {/* Background color and full screen height */}
+      <div className='pt-6 pb-6 flex flex-col md:flex-row gap-7 md:ml-72'>
         {/* Left */}
-        <div className='bg-white w-[576px] h-[650px] rounded-lg overflow-scroll'>
+        <div className='bg-white md:w-[576px] w-full h-auto md:h-[650px] rounded-lg overflow-scroll'>
           <h1 className='text-[#C12A2A] font-bold text-2xl ml-5 mt-5'>Add Doctor</h1>
-          <form class="max-w-sm ml-5 mt-5">
-            <div className='flex'>
+          <form className="max-w-sm ml-5 mt-5">
+            <div className='flex flex-col md:flex-row'>
               {/* INPUT FIELDS */}
               <div>
-                <div className="mb-5 flex gap-14 items-center">
+                <div className="mb-5 flex flex-col md:flex-row gap-14 items-center">
                   <div>
                     <label htmlFor="image-upload" className="block mb-2 text-sm font-medium text-gray-900">Upload Image</label>
                     <input type="file" name='image' id="image-upload" accept="image/*" className="w-72 shadow-sm bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light" onChange={handleImageChange} />
                   </div>
                   {selectedImage && (
-                    <button type='button' onClick={deleteImage}>
-                      <i className="fa-solid fa-trash text-2xl mt-6"></i>
+                    <button type='button' onClick={deleteImage} className="md:mt-6">
+                      <i className="fa-solid fa-trash text-2xl"></i>
                     </button>
                   )}
                 </div>
@@ -261,7 +261,7 @@ const Doctors = () => {
               </div>
 
               {/* DISPLAY IMAGE */}
-              <div className='ml-44'>
+              <div className='ml-0 md:ml-44 mt-4 md:mt-0'>
                 {selectedImage && (
                   <div className="mt-4" style={{ width: '100px', height: '100px' }}>
                     <img src={selectedImage} alt="Selected" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -276,43 +276,40 @@ const Doctors = () => {
         </div>
 
         {/* Right */}
-        <div className='bg-white w-[616px] h-[650px] rounded-lg'>
+        <div className='bg-white pb-5 md:w-[616px] w-full h-auto md:h-[650px] rounded-lg'>
           {/* TOP */}
-          <div className='flex'>
+          <div className='flex flex-wrap md:flex-nowrap'>
             <div>
               <h1 className='text-[#C12A2A] font-bold text-2xl ml-5 mt-5'>Doctors</h1>
             </div>
-            <div className='ml-32 w-80'>
-              <label for="default-search" class="mb-2 w-full text-sm font-medium text-gray-900 dark:text-white">Search</label>
+            <div className='md:ml-32 w-full md:w-80 mt-4 md:mt-0'>
+              <label htmlFor="default-search" className="mb-2 w-full text-sm font-medium text-gray-900 dark:text-white">Search</label>
               <div>
-                <div class="inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                  <i class="fa-solid fa-magnifying-glass absolute z-10 text-white mt-14"></i>
+                <div className="inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                  <i className="fa-solid fa-magnifying-glass absolute z-10 text-white mt-14"></i>
                 </div>
-                <input type="search" value={search} onChange={handleSearch} id="default-search" class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search for doctors" />
+                <input type="search" value={search} onChange={handleSearch} id="default-search" className="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search for doctors" />
               </div>
             </div>
           </div>
 
           {/* DISPLAY */}
-          <div className='bg-white w-[600px] h-[550px] rounded-lg overflow-y-scroll'> {/* Adjusted for vertical scrolling */}
+          <div className='bg-white w-full h-auto md:h-[550px] rounded-lg overflow-y-scroll mt-5'> {/* Adjusted for vertical scrolling and responsiveness */}
             <div className='flex flex-wrap justify-start'> {/* Container for boxes, ensuring they are laid out properly */}
               <div>
                 {
                   filteredDoctors && filteredDoctors.length > 0 ? (
                     filteredDoctors.map((doctor) => (
-                      <div key={doctor.id} className='w-[170px] h-60 ml-5 mt-5 bg-slate-800 rounded-lg inline-block'>
+                      <div key={doctor.id} className='w-full sm:w-[170px] h-auto sm:h-60 m-2 sm:ml-5 sm:mt-5 bg-slate-800 rounded-lg'>
                         <div className='flex justify-center'>
                           <img src={doctor.image} alt='doctor' className='w-20 h-20 mt-5 rounded-full' />
                         </div>
-                        <div className='mt-10'>
+                        <div className='mt-5'>
                           <h1 className='text-white font-bold text-center text-sm'>{doctor.name}</h1>
                           <p className='text-white text-sm text-center'>{doctor.department}</p>
                         </div>
                         <div className='mt-5 text-right mr-4 text-gray-300'>
-                          <i
-                            className="fa-solid fa-circle-info hover:cursor-pointer hover:text-gray-100"
-                            onClick={() => handleModalToggle(doctor)}
-                          ></i>
+                          <i className="fa-solid fa-circle-info hover:cursor-pointer hover:text-gray-100" onClick={() => handleModalToggle(doctor)}></i>
                           <i className="fa-solid fa-trash ml-4 hover:cursor-pointer hover:text-red-400" onClick={() => handleDelete(doctor.id)}></i>
                           <i className="fa-solid fa-pen-to-square ml-4 hover:cursor-pointer hover:text-gray-100" onClick={() => handleEdit(doctor.id)}></i>
                         </div>

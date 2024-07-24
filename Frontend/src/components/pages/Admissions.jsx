@@ -20,6 +20,8 @@ const Admissions = () => {
     setAdmissions({ ...admissions, [e.target.name]: e.target.value });
   };
 
+  const URL = import.meta.env.VITE_BACKEND_URL;
+
   const addAdmission = async (e) => {
     try {
       e.preventDefault();
@@ -145,9 +147,9 @@ const Admissions = () => {
 
   return (
     <div className='bg-[#d0d0d0] min-h-screen'>
-      <div className='pt-6 pb-6 flex gap-7 ml-72'>
+      <div className='pt-6 pb-6 flex flex-col md:flex-row gap-7 md:ml-72 ml-5 mr-5'>
         {/* Left */}
-        <div className='bg-white w-[576px] h-[650px] rounded-lg overflow-scroll'>
+        <div className='bg-white md:w-[576px] h-[650px] rounded-lg overflow-scroll'>
           <h1 className='text-[#C12A2A] font-bold text-2xl ml-5 mt-5'>Add Admission</h1>
           <form class="max-w-sm ml-5 mt-5">
             <div className='flex'>
@@ -214,7 +216,7 @@ const Admissions = () => {
         </div>
 
         {/* Right */}
-        <div className='bg-white w-[616px] h-[650px] rounded-lg'>
+        <div className='bg-white md:w-[616px] h-[650px] rounded-lg'>
           {/* TOP */}
           <div className='flex'>
             <div>
@@ -232,7 +234,7 @@ const Admissions = () => {
           </div>
 
           {/* DISPLAY */}
-          <div className='bg-white w-[600px] h-[550px] rounded-lg overflow-y-scroll'>
+          <div className='bg-white md:w-[600px] h-[550px] rounded-lg overflow-y-scroll'>
             <div className='flex flex-wrap justify-start'>
               {
                 filteredAdmissions && filteredAdmissions.length > 0 ? (

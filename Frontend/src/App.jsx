@@ -11,6 +11,8 @@ import Analytics from "./components/pages/Analytics";
 import Doctors from "./components/pages/Doctors";
 import Patients from "./components/pages/Patients";
 import News from "./components/pages/News";
+import Header from "./components/pages/Header";
+import ErrorPage from "./components/pages/ErrorPage";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -44,6 +46,7 @@ const router = createBrowserRouter([
     element: (
       <div>
         <Control />
+        <Header />
         <Dashboard />
       </div>
     ),
@@ -53,6 +56,7 @@ const router = createBrowserRouter([
     element: (
       <div>
         <Control />
+        <Header />
         <Doctors />
       </div>
     ),
@@ -62,6 +66,7 @@ const router = createBrowserRouter([
     element: (
       <div>
         <Control />
+        <Header />
         <Patients />
       </div>
     ),
@@ -71,6 +76,7 @@ const router = createBrowserRouter([
     element: (
       <div>
         <Control />
+        <Header />
         <Analytics />
       </div>
     ),
@@ -80,6 +86,7 @@ const router = createBrowserRouter([
     element: (
       <div>
         <Control />
+        <Header />
         <Attendance />
       </div>
     ),
@@ -89,6 +96,7 @@ const router = createBrowserRouter([
     element: (
       <div>
         <Control />
+        <Header />
         <Admissions />
       </div>
     ),
@@ -98,7 +106,16 @@ const router = createBrowserRouter([
     element: (
       <div>
         <Control />
+        <Header />
         <News />
+      </div>
+    ),
+  },
+  {
+    path: "*",
+    element: (
+      <div>
+        <ErrorPage />
       </div>
     ),
   },

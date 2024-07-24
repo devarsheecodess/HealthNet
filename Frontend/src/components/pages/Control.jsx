@@ -38,10 +38,10 @@ const Control = () => {
 
   return (
     <div>
-      <aside id="logo-sidebar" className="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
+      <aside id="logo-sidebar" className="fixed top-0 left-0 z-40 w-64 h-screen transition-transform sm:-translate-x-0 -translate-x-full" aria-label="Sidebar">
         <div className="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-[#03071C]">
           <Link to={`/home/${id}`} href="https://flowbite.com/" className="flex items-center ps-2.5 mb-5">
-            <img src="https://flowbite.com/docs/images/logo.svg" className="h-6 me-3 sm:h-7" alt="Flowbite Logo" />
+            <i class="fa-solid fa-house-medical fa-lg mr-2 text-[#d73737]"></i>
             <span className="self-center text-xl font-semibold whitespace-nowrap dark:text-white">Health<span className="text-[#C12A2A]">Net</span></span>
           </Link>
           <ul className="space-y-2 ml-2 font-medium">
@@ -141,9 +141,8 @@ const Control = () => {
       </aside >
       {
         showModal && (
-          <div className='fixed inset-0 flex justify-center backdrop-blur-sm'>
-            <div className='mt-10 ml-[100px] h-min w-[400px] flex flex-col gap-3 hover:cursor-pointer text-white bg-gray-800 p-7 rounded-xl'>
-
+          <div className='fixed inset-0 flex justify-center items-center backdrop-blur-sm'>
+            <div className='m-auto h-min w-full sm:w-[400px] flex flex-col gap-3 text-white bg-gray-800 p-4 sm:p-7 rounded-xl'>
               <h1 className="font-bold text-center mb-3">Are you sure you want to logout?</h1>
               <div className="flex gap-4 justify-center">
                 <button className='bg-blue-700 text-white p-2 rounded-lg w-20' onClick={() => setLogoutFlag(true)}>Yes</button>

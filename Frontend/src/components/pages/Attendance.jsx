@@ -74,8 +74,8 @@ const Attendance = () => {
 
   return (
     <div className='bg-[#d0d0d0] min-h-screen'>
-      <div className='pt-6 pb-6 flex flex-col ml-72'>
-        <div className='flex flex-col bg-white w-[1220px] h-[650px] rounded-xl'>
+      <div className='pt-6 pb-6 flex flex-col md:ml-72'>
+        <div className='flex flex-col bg-white md:w-[1220px] h-[650px] rounded-xl ml-5 mr-5'>
           {/* TOP */}
           <div className='flex'>
             <h1 className='text-[#C12A2A] font-bold text-2xl ml-5 mt-5'>Attendance</h1>

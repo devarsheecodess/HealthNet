@@ -53,11 +53,7 @@ const Login = () => {
             href="#"
             class="flex items-center mb-6 text-2xl font-semibold text-[#C12A2A]"
           >
-            <img
-              class="w-8 h-8 mr-2"
-              src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/logo.svg"
-              alt="logo"
-            ></img>
+            <i class="fa-solid fa-house-medical fa-lg mr-2 text-[#d73737]"></i>
             HealthNet
           </a>
           <div class="w-full  rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 bg-gray-800 dark:border-gray-700">
