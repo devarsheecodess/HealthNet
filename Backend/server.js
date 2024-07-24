@@ -10,6 +10,7 @@ const cron = require("node-cron");
 const { MongoClient } = require("mongodb");
 const dotenv = require("dotenv");
 dotenv.config();
+const PORT = process.env.PORT || 3000
 
 const app = express();
 app.use(express.json());
@@ -241,6 +242,6 @@ cron.schedule("0 0 1 1 *", async () => {
   }
 });
 
-app.listen(3000, () => {
+app.listen(PORT, () => {
   console.log("Server is running on http://localhost:3000");
 });
