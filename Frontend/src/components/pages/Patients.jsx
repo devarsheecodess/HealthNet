@@ -17,7 +17,7 @@ const Patients = () => {
     try {
       const parentID = localStorage.getItem('id');
 
-      const response = await axios.get(`http://localhost:3000/doctors`, {
+      const response = await axios.get(`https://healthnet-backend.onrender.com/doctors`, {
         params: { parentID }
       });
 
@@ -36,7 +36,7 @@ const Patients = () => {
     const parentID = localStorage.getItem('id');
 
     try {
-      const response = await axios.post("http://localhost:3000/patients", {
+      const response = await axios.post("https://healthnet-backend.onrender.com/patients", {
         parentID: parentID, id: id, name: patients.name, address: patients.address, phone: patients.phone, age: patients.age, gender: patients.gender, issue: patients.issue, doctor: patients.doctor, doa: patients.doa, time: patients.time,
       });
 
@@ -59,7 +59,7 @@ const Patients = () => {
     try {
       const parentID = localStorage.getItem('id');
 
-      const response = await axios.get(`http://localhost:3000/patients`, {
+      const response = await axios.get(`https://healthnet-backend.onrender.com/patients`, {
         params: { parentID }
       });
 
@@ -97,7 +97,7 @@ const Patients = () => {
 
   const handleEdit = async (id) => {
     try {
-      const response = await axios.delete(`http://localhost:3000/patients`, { params: { id } });
+      const response = await axios.delete(`https://healthnet-backend.onrender.com/patients`, { params: { id } });
       console.log(response.data);
 
       setPatients({ ...patientsList.find((patient) => patient.id === id), id });

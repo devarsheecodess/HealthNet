@@ -51,7 +51,7 @@ const Doctors = () => {
     const parentID = localStorage.getItem('id'); // Retrieve parentID from local storage
 
     try {
-      const response = await axios.post("http://localhost:3000/doctors", {
+      const response = await axios.post("https://healthnet-backend.onrender.com/doctors", {
         parentID: parentID,
         id: id,
         image: selectedImage,
@@ -103,7 +103,7 @@ const Doctors = () => {
     try {
       const parentID = localStorage.getItem('id');
 
-      const response = await axios.get(`http://localhost:3000/doctors`, {
+      const response = await axios.get(`https://healthnet-backend.onrender.com/doctors`, {
         params: { parentID }
       });
 
@@ -117,7 +117,7 @@ const Doctors = () => {
     const cf = confirm("Are you sure you want to delete this doctor?");
     if (!cf) return;
     try {
-      const response = await axios.delete(`http://localhost:3000/doctors`, { params: { id } });
+      const response = await axios.delete(`https://healthnet-backend.onrender.com/doctors`, { params: { id } });
       console.log(response.data);
 
       toast.success("Doctor deleted successfully!");
@@ -129,7 +129,7 @@ const Doctors = () => {
 
   const handleEdit = async (id) => {
     try {
-      const response = await axios.delete(`http://localhost:3000/doctors`, { params: { id } });
+      const response = await axios.delete(`https://healthnet-backend.onrender.com/doctors`, { params: { id } });
       console.log(response.data);
 
       console.log("Editing doctor with id " + id);

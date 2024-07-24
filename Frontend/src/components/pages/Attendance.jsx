@@ -13,7 +13,7 @@ const Attendance = () => {
     try {
       const parentID = localStorage.getItem('id');
 
-      const response = await axios.get(`http://localhost:3000/doctors`, {
+      const response = await axios.get(`https://healthnet-backend.onrender.com/doctors`, {
         params: { parentID }
       });
 
@@ -47,7 +47,7 @@ const Attendance = () => {
 
   const handleStatusChange = async (id) => {
     try {
-      const response = await axios.put(`http://localhost:3000/doctors`, {
+      const response = await axios.put(`https://healthnet-backend.onrender.com/doctors`, {
         id,
         status
       });

@@ -26,7 +26,7 @@ const Admissions = () => {
       const id = uuidv4();
       const parentID = localStorage.getItem('id');
 
-      const response = await axios.post("http://localhost:3000/admissions", {
+      const response = await axios.post("https://healthnet-backend.onrender.com/admissions", {
         parentID: parentID,
         id: id,
         name: admissions.name,
@@ -57,7 +57,7 @@ const Admissions = () => {
     try {
       const parentID = localStorage.getItem('id');
 
-      const response = await axios.get(`http://localhost:3000/admissions`, {
+      const response = await axios.get(`https://healthnet-backend.onrender.com/admissions`, {
         params: { parentID }
       });
 
@@ -91,7 +91,7 @@ const Admissions = () => {
 
   const handleDelete = async (id) => {
     try {
-      const response = await axios.delete(`http://localhost:3000/admissions`, { params: { id } });
+      const response = await axios.delete(`https://healthnet-backend.onrender.com/admissions`, { params: { id } });
       console.log(response.data);
 
       toast.success("Patient deleted successfully!");
@@ -103,7 +103,7 @@ const Admissions = () => {
 
   const handleEdit = async (id) => {
     try {
-      const response = await axios.delete(`http://localhost:3000/admissions`, { params: { id } });
+      const response = await axios.delete(`https://healthnet-backend.onrender.com/admissions`, { params: { id } });
       console.log(response.data);
 
       setAdmissions({ ...admissionsList.find((patient) => patient.id === id), id });
@@ -123,11 +123,11 @@ const Admissions = () => {
       const parentID = localStorage.getItem('id');
 
       // Post the earnings data
-      const postResponse = await axios.post('http://localhost:3000/earnings', { year, month, earnings, parentID });
+      const postResponse = await axios.post('https://healthnet-backend.onrender.com/earnings', { year, month, earnings, parentID });
       console.log('Post response:', postResponse.data);
 
       // Attempt to delete the patient only if posting earnings was successful
-      const deleteResponse = await axios.delete(`http://localhost:3000/patients`, { params: { id: doneID } });
+      const deleteResponse = await axios.delete(`https://healthnet-backend.onrender.com/patients`, { params: { id: doneID } });
       console.log('Delete response:', deleteResponse.data);
 
       // Update UI state only after successful operations

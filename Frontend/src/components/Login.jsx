@@ -25,7 +25,7 @@ const Login = () => {
     }
     e.preventDefault();
     axios
-      .post("http://localhost:3000/login", { username, password })
+      .post("https://healthnet-backend.onrender.com/login", { username, password })
       .then((result) => {
         console.log(result);
         if (result.data.success) {

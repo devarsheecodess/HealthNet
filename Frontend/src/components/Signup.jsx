@@ -50,7 +50,7 @@ const Signup = () => {
     }
     e.preventDefault();
     axios
-      .post("http://localhost:3000/signup", {
+      .post("https://healthnet-backend.onrender.com/signup", {
         username,
         password,
         firstName,
