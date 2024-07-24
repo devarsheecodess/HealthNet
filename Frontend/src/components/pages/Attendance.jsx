@@ -8,12 +8,13 @@ const Attendance = () => {
   const [filteredDoctors, setFilteredDoctors] = useState([]);
 
   const [status, setStatus] = useState("");
+  const URL = import.meta.env.VITE_BACKEND_URL;
 
   const fetchDoctors = async () => {
     try {
       const parentID = localStorage.getItem('id');
 
-      const response = await axios.get(`https://healthnet-backend.onrender.com/doctors`, {
+      const response = await axios.get(`${URL}/doctors`, {
         params: { parentID }
       });
 
@@ -47,7 +48,7 @@ const Attendance = () => {
 
   const handleStatusChange = async (id) => {
     try {
-      const response = await axios.put(`https://healthnet-backend.onrender.com/doctors`, {
+      const response = await axios.put(`${URL}/doctors`, {
         id,
         status
       });

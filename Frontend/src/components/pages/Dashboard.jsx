@@ -32,6 +32,7 @@ const Dashboard = () => {
   const [doneID, setDoneID] = useState('')
 
   const { id } = useParams();
+  const URL = import.meta.env.VITE_BACKEND_URL;
 
   const addID = () => {
     localStorage.setItem('id', id)
@@ -74,7 +75,7 @@ const Dashboard = () => {
     try {
       const parentID = localStorage.getItem('id');
 
-      const response = await axios.get(`https://healthnet-backend.onrender.com/patients`, {
+      const response = await axios.get(`${URL}/patients`, {
         params: { parentID }
       });
 
@@ -88,7 +89,7 @@ const Dashboard = () => {
     try {
       const parentID = localStorage.getItem('id');
 
-      const response = await axios.get(`https://healthnet-backend.onrender.com/doctors`, {
+      const response = await axios.get(`${URL}/doctors`, {
         params: { parentID }
       });
 
@@ -113,7 +114,7 @@ const Dashboard = () => {
     const cf = confirm("Are you sure you want to delete this patient?");
     if (!cf) return;
     try {
-      const response = await axios.delete(`https://healthnet-backend.onrender.com/patients`, { params: { id } });
+      const response = await axios.delete(`${URL}/patients`, { params: { id } });
       console.log(response.data);
 
       toast.success("Patient deleted successfully!");
@@ -143,11 +144,11 @@ const Dashboard = () => {
       const parentID = localStorage.getItem('id');
 
       // Post the earnings data
-      const postResponse = await axios.post('https://healthnet-backend.onrender.com/earnings', { year, month, earnings, parentID });
+      const postResponse = await axios.post('${URL}/earnings', { year, month, earnings, parentID });
       console.log('Post response:', postResponse.data);
 
       // Attempt to delete the patient only if posting earnings was successful
-      const deleteResponse = await axios.delete(`https://healthnet-backend.onrender.com/patients`, { params: { id: doneID } });
+      const deleteResponse = await axios.delete(`${URL}/patients`, { params: { id: doneID } });
       console.log('Delete response:', deleteResponse.data);
 
       // Update UI state only after successful operations

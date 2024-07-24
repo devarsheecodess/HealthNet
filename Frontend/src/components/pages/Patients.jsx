@@ -12,12 +12,13 @@ const Patients = () => {
   const [filteredPatients, setFilteredPatients] = useState(patientsList);
 
   const [search, setSearch] = useState("");
+  const URL = import.meta.env.VITE_BACKEND_URL;
 
   const fetchDoctors = async () => {
     try {
       const parentID = localStorage.getItem('id');
 
-      const response = await axios.get(`https://healthnet-backend.onrender.com/doctors`, {
+      const response = await axios.get(`${URL}/doctors`, {
         params: { parentID }
       });
 
@@ -36,7 +37,7 @@ const Patients = () => {
     const parentID = localStorage.getItem('id');
 
     try {
-      const response = await axios.post("https://healthnet-backend.onrender.com/patients", {
+      const response = await axios.post(`${URL}/patients`, {
         parentID: parentID, id: id, name: patients.name, address: patients.address, phone: patients.phone, age: patients.age, gender: patients.gender, issue: patients.issue, doctor: patients.doctor, doa: patients.doa, time: patients.time,
       });
 
@@ -59,7 +60,7 @@ const Patients = () => {
     try {
       const parentID = localStorage.getItem('id');
 
-      const response = await axios.get(`https://healthnet-backend.onrender.com/patients`, {
+      const response = await axios.get(`${URL}/patients`, {
         params: { parentID }
       });
 
@@ -97,7 +98,7 @@ const Patients = () => {
 
   const handleEdit = async (id) => {
     try {
-      const response = await axios.delete(`https://healthnet-backend.onrender.com/patients`, { params: { id } });
+      const response = await axios.delete(`${URL}/patients`, { params: { id } });
       console.log(response.data);
 
       setPatients({ ...patientsList.find((patient) => patient.id === id), id });

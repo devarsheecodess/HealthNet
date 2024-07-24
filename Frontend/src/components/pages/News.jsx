@@ -22,7 +22,6 @@ const News = () => {
             lastWeek.setDate(today.getDate() - 7);
     
             const API_KEY = import.meta.env.VITE_API_KEY;
-            console.log("Using API Key:", API_KEY);
     
             // Use the proxy path `/api`
             const url = `/api/v2/everything?q=hospitals&from=${lastWeek.toISOString()}&to=${today.toISOString()}&sortBy=publishedAt&apiKey=${API_KEY}`;

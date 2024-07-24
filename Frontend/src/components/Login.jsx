@@ -18,6 +18,8 @@ const Login = () => {
     setShowPassword(!showPassword);
   };
 
+  const URL = import.meta.env.VITE_BACKEND_URL;
+
   const handleSignIn = (e) => {
     if (!username || !password) {
       alert("Please fill in all the fields");
@@ -25,7 +27,7 @@ const Login = () => {
     }
     e.preventDefault();
     axios
-      .post("https://healthnet-backend.onrender.com/login", { username, password })
+      .post(`${URL}/login`, { username, password })
       .then((result) => {
         console.log(result);
         if (result.data.success) {

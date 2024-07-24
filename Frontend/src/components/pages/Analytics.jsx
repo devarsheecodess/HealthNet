@@ -51,7 +51,7 @@ const Analytics = () => {
     try {
       const year = new Date().getFullYear();
       const parentID = localStorage.getItem('id');
-      const response = await axios.get('https://healthnet-backend.onrender.com/earnings', {
+      const response = await axios.get(`${URL}/earnings`, {
         params: { year, parentID }
       });
 
@@ -82,7 +82,7 @@ const Analytics = () => {
     try {
       const parentID = localStorage.getItem('id');
 
-      const response = await axios.get('https://healthnet-backend.onrender.com/admissions', {
+      const response = await axios.get(`${URL}/admissions`, {
         params: { parentID }
       });
 
@@ -97,7 +97,7 @@ const Analytics = () => {
     try {
       const parentID = localStorage.getItem('id');
 
-      const response = await axios.get(`https://healthnet-backend.onrender.com/patients`, {
+      const response = await axios.get(`${URL}/patients`, {
         params: { parentID }
       });
 
@@ -120,7 +120,7 @@ const Analytics = () => {
     try {
       const parentID = localStorage.getItem('id');
 
-      const response = await axios.get("https://healthnet-backend.onrender.com/patients", { params: { parentID } });
+      const response = await axios.get(`${URL}/patients`, { params: { parentID } });
       const patients = response.data;
 
       const malePatients = patients.filter(patient => patient.gender.toLowerCase() === "male");
@@ -137,7 +137,7 @@ const Analytics = () => {
     try {
       const parentID = localStorage.getItem('id');
 
-      const response = await axios.get("https://healthnet-backend.onrender.com/admissions", { params: { parentID } });
+      const response = await axios.get(`${URL}/admissions`, { params: { parentID } });
       const admissions = response.data;
 
       const maleAdmissions = admissions.filter(admission => admission.gender.toLowerCase() === "male");

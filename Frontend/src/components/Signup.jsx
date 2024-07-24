@@ -21,6 +21,8 @@ const Signup = () => {
   const [hospital, setHospital] = useState("");
   const navigate = useNavigate();
 
+  const URL = import.meta.env.VITE_BACKEND_URL;
+
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
@@ -50,7 +52,7 @@ const Signup = () => {
     }
     e.preventDefault();
     axios
-      .post("https://healthnet-backend.onrender.com/signup", {
+      .post(`${URL}/signup`, {
         username,
         password,
         firstName,
