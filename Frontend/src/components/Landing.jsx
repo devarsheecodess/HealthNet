@@ -519,7 +519,7 @@ const Landing = () => {
                 </h2>
                 <ul className="text-gray-500 dark:text-gray-400 font-medium">
                   <li className="mb-4">
-                    <a onClick={()=>alert("Subscription model is not yet launched!")} className="hover:underline cursor-pointer">
+                    <a onClick={() => alert("Subscription model is not yet launched!")} className="hover:underline cursor-pointer">
                       HealthNet Pro
                     </a>
                   </li>
