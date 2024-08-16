@@ -16,6 +16,8 @@ const Admissions = () => {
   const [priceID, setPriceID] = useState("");
   const [price, setPrice] = useState(0)
 
+  const [loading, setLoading] = useState(false);
+
   const handleChange = (e) => {
     setAdmissions({ ...admissions, [e.target.name]: e.target.value });
   };
@@ -57,6 +59,7 @@ const Admissions = () => {
 
   const fetchAdmissions = async () => {
     try {
+      setLoading(true);
       const parentID = localStorage.getItem('id');
 
       const response = await axios.get(`${URL}/admissions`, {
@@ -66,6 +69,8 @@ const Admissions = () => {
       setAdmissionsList(response.data);
     } catch (error) {
       console.error('Error fetching admissions:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -237,47 +242,54 @@ const Admissions = () => {
           <div className='bg-white md:w-[600px] h-[550px] rounded-lg overflow-y-scroll'>
             <div className='flex flex-wrap justify-start'>
               {
-                filteredAdmissions && filteredAdmissions.length > 0 ? (
-                  filteredAdmissions.map((admission) => (
-                    <div key={admission.id} className='w-[170px] h-min ml-5 mb-5 bg-slate-800 rounded-lg inline-block p-3'>
-                      <div>
-                        <h1 className='text-white text-sm'><span className='font-bold'>Name: </span>{admission.name}</h1>
-                        <h1 className='text-white text-sm'><span className='font-bold'>Address:</span> {admission.address}</h1>
-                        <h1 className='text-white text-sm'><span className='font-bold'>Phone number:</span> {admission.phone}</h1>
-                        <h1 className='text-white text-sm'><span className='font-bold'>Age:</span> {admission.age}</h1>
-                        <h1 className='text-white text-sm'><span className='font-bold'>Gender:</span> {admission.gender}</h1>
-                        <h1 className='text-white text-sm'><span className='font-bold'>Date of birth:</span> {admission.dob}</h1>
-                        <h1 className='text-white text-sm'><span className='font-bold'>Blood Group:</span> {admission.bloodGroup}</h1>
-                        <h1 className='text-white text-sm'><span className='font-bold'>Illness: </span>{admission.reason}</h1>
-                        <h1 className='text-white text-sm'><span className='font-bold'>Date: </span>{admission.dateOfAdmission}</h1>
-                      </div>
-                      <div className='mt-5 text-right text-gray-300'>
-                        <i className="fa-solid fa-trash ml-4 hover:cursor-pointer hover:text-red-400" onClick={() => { setShowPriceModal(true); setPriceID(admission.id) }}></i>
-                        <i className="fa-solid fa-pen-to-square ml-4 hover:cursor-pointer hover:text-gray-100" onClick={() => handleEdit(admission.id)}></i>
-                      </div>
-                    </div>
-                  ))
+                loading ? (
+                  <div className='flex justify-center ml-5'>
+                    <p>Loading...</p>
+                  </div>
                 ) : (
-                  admissionsList.map((admission) => (
-                    <div key={admission.id} className='w-[170px] h-min ml-5 mb-5 bg-slate-800 rounded-lg inline-block p-3'>
-                      <div>
-                        <h1 className='text-white text-sm'><span className='font-bold'>Name: </span>{admission.name}</h1>
-                        <h1 className='text-white text-sm'><span className='font-bold'>Address:</span> {admission.address}</h1>
-                        <h1 className='text-white text-sm'><span className='font-bold'>Phone number:</span> {admission.phone}</h1>
-                        <h1 className='text-white text-sm'><span className='font-bold'>Age:</span> {admission.age}</h1>
-                        <h1 className='text-white text-sm'><span className='font-bold'>Gender:</span> {admission.gender}</h1>
-                        <h1 className='text-white text-sm'><span className='font-bold'>Date of birth:</span> {admission.dob}</h1>
-                        <h1 className='text-white text-sm'><span className='font-bold'>Blood Group:</span> {admission.bloodGroup}</h1>
-                        <h1 className='text-white text-sm'><span className='font-bold'>Illness: </span>{admission.reason}</h1>
-                        <h1 className='text-white text-sm'><span className='font-bold'>Date: </span>{admission.dateOfAdmission}</h1>
+                  filteredAdmissions && filteredAdmissions.length > 0 ? (
+                    filteredAdmissions.map((admission) => (
+                      <div key={admission.id} className='w-[170px] h-min ml-5 mb-5 bg-slate-800 rounded-lg inline-block p-3'>
+                        <div>
+                          <h1 className='text-white text-sm'><span className='font-bold'>Name: </span>{admission.name}</h1>
+                          <h1 className='text-white text-sm'><span className='font-bold'>Address:</span> {admission.address}</h1>
+                          <h1 className='text-white text-sm'><span className='font-bold'>Phone number:</span> {admission.phone}</h1>
+                          <h1 className='text-white text-sm'><span className='font-bold'>Age:</span> {admission.age}</h1>
+                          <h1 className='text-white text-sm'><span className='font-bold'>Gender:</span> {admission.gender}</h1>
+                          <h1 className='text-white text-sm'><span className='font-bold'>Date of birth:</span> {admission.dob}</h1>
+                          <h1 className='text-white text-sm'><span className='font-bold'>Blood Group:</span> {admission.bloodGroup}</h1>
+                          <h1 className='text-white text-sm'><span className='font-bold'>Illness: </span>{admission.reason}</h1>
+                          <h1 className='text-white text-sm'><span className='font-bold'>Date: </span>{admission.dateOfAdmission}</h1>
+                        </div>
+                        <div className='mt-5 text-right text-gray-300'>
+                          <i className="fa-solid fa-trash ml-4 hover:cursor-pointer hover:text-red-400" onClick={() => { setShowPriceModal(true); setPriceID(admission.id) }}></i>
+                          <i className="fa-solid fa-pen-to-square ml-4 hover:cursor-pointer hover:text-gray-100" onClick={() => handleEdit(admission.id)}></i>
+                        </div>
                       </div>
-                      <div className='mt-5 text-right text-gray-300'>
-                        <i className="fa-solid fa-trash ml-4 hover:cursor-pointer hover:text-red-400" onClick={() => { setShowPriceModal(true); setPriceID(admission.id) }}></i>
-                        <i className="fa-solid fa-pen-to-square ml-4 hover:cursor-pointer hover:text-gray-100" onClick={() => handleEdit(admission.id)}></i>
+                    ))
+                  ) : (
+                    admissionsList.map((admission) => (
+                      <div key={admission.id} className='w-[170px] h-min ml-5 mb-5 bg-slate-800 rounded-lg inline-block p-3'>
+                        <div>
+                          <h1 className='text-white text-sm'><span className='font-bold'>Name: </span>{admission.name}</h1>
+                          <h1 className='text-white text-sm'><span className='font-bold'>Address:</span> {admission.address}</h1>
+                          <h1 className='text-white text-sm'><span className='font-bold'>Phone number:</span> {admission.phone}</h1>
+                          <h1 className='text-white text-sm'><span className='font-bold'>Age:</span> {admission.age}</h1>
+                          <h1 className='text-white text-sm'><span className='font-bold'>Gender:</span> {admission.gender}</h1>
+                          <h1 className='text-white text-sm'><span className='font-bold'>Date of birth:</span> {admission.dob}</h1>
+                          <h1 className='text-white text-sm'><span className='font-bold'>Blood Group:</span> {admission.bloodGroup}</h1>
+                          <h1 className='text-white text-sm'><span className='font-bold'>Illness: </span>{admission.reason}</h1>
+                          <h1 className='text-white text-sm'><span className='font-bold'>Date: </span>{admission.dateOfAdmission}</h1>
+                        </div>
+                        <div className='mt-5 text-right text-gray-300'>
+                          <i className="fa-solid fa-trash ml-4 hover:cursor-pointer hover:text-red-400" onClick={() => { setShowPriceModal(true); setPriceID(admission.id) }}></i>
+                          <i className="fa-solid fa-pen-to-square ml-4 hover:cursor-pointer hover:text-gray-100" onClick={() => handleEdit(admission.id)}></i>
+                        </div>
                       </div>
-                    </div>
-                  ))
-                )}
+                    ))
+                  )
+                )
+              }
             </div>
           </div>
         </div>

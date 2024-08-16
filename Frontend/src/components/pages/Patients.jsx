@@ -223,44 +223,45 @@ const Patients = () => {
                     <p>Loading...</p>
                   </div>
                 ) : (
-                  filteredPatients && filteredPatients.length > 0 ? (
-                    filteredPatients.map((patient) => (
-                      <div key={patient.id} className='w-[170px] h-min ml-5 mt-5 bg-slate-800 rounded-lg inline-block p-3'>
-                        <div>
-                          <h1 className='text-white text-sm'><span className='font-bold'>Name: </span>{patient.name}</h1>
-                          <h1 className='text-white text-sm'><span className='font-bold'>Address:</span> {patient.address}</h1>
-                          <h1 className='text-white text-sm'><span className='font-bold'>Phone number:</span> {patient.phone}</h1>
-                          <h1 className='text-white text-sm'><span className='font-bold'>Age:</span> {patient.age}</h1>
-                          <h1 className='text-white text-sm'><span className='font-bold'>Gender:</span> {patient.gender}</h1>
-                          <h1 className='text-white text-sm'><span className='font-bold'>Issue:</span> {patient.issue}</h1>
-                          <h1 className='text-white text-sm'><span className='font-bold'>Doctor:</span> {patient.doctor}</h1>
-                          <h1 className='text-white text-sm'><span className='font-bold'>Date: </span>{patient.doa}</h1>
-                          <h1 className='text-white text-sm'><span className='font-bold'>Time: </span>{patient.time}</h1>
+                    filteredPatients && filteredPatients.length > 0 ? (
+                      filteredPatients.map((patient) => (
+                        <div key={patient.id} className='w-[170px] h-min ml-5 mt-5 bg-slate-800 rounded-lg inline-block p-3'>
+                          <div>
+                            <h1 className='text-white text-sm'><span className='font-bold'>Name: </span>{patient.name}</h1>
+                            <h1 className='text-white text-sm'><span className='font-bold'>Address:</span> {patient.address}</h1>
+                            <h1 className='text-white text-sm'><span className='font-bold'>Phone number:</span> {patient.phone}</h1>
+                            <h1 className='text-white text-sm'><span className='font-bold'>Age:</span> {patient.age}</h1>
+                            <h1 className='text-white text-sm'><span className='font-bold'>Gender:</span> {patient.gender}</h1>
+                            <h1 className='text-white text-sm'><span className='font-bold'>Issue:</span> {patient.issue}</h1>
+                            <h1 className='text-white text-sm'><span className='font-bold'>Doctor:</span> {patient.doctor}</h1>
+                            <h1 className='text-white text-sm'><span className='font-bold'>Date: </span>{patient.doa}</h1>
+                            <h1 className='text-white text-sm'><span className='font-bold'>Time: </span>{patient.time}</h1>
+                          </div>
+                          <div className='mt-5 text-right text-gray-300'>
+                            <i className="fa-solid fa-pen-to-square hover:cursor-pointer hover:text-gray-100" onClick={() => handleEdit(patient.id)}></i>
+                          </div>
                         </div>
-                        <div className='mt-5 text-right text-gray-300'>
-                          <i className="fa-solid fa-pen-to-square hover:cursor-pointer hover:text-gray-100" onClick={() => handleEdit(patient.id)}></i>
-                        </div>
-                      </div>
-                    ))
+                      ))
                   ) : (
-                    patientsList.map((patient) => (
-                      <div key={patient.id} className='w-[170px] h-min ml-5 mt-5 bg-slate-800 rounded-lg inline-block p-3'>
-                        <div>
-                          <h1 className='text-white text-sm'><span className='font-bold'>Name: </span>{patient.name}</h1>
-                          <h1 className='text-white text-sm'><span className='font-bold'>Address:</span> {patient.address}</h1>
-                          <h1 className='text-white text-sm'><span className='font-bold'>Phone number:</span> {patient.phone}</h1>
-                          <h1 className='text-white text-sm'><span className='font-bold'>Age:</span> {patient.age}</h1>
-                          <h1 className='text-white text-sm'><span className='font-bold'>Gender:</span> {patient.gender}</h1>
-                          <h1 className='text-white text-sm'><span className='font-bold'>Issue:</span> {patient.issue}</h1>
-                          <h1 className='text-white text-sm'><span className='font-bold'>Doctor:</span> {patient.doctor}</h1>
-                          <h1 className='text-white text-sm'><span className='font-bold'>Date: </span>{patient.doa}</h1>
-                          <h1 className='text-white text-sm'><span className='font-bold'>Time: </span>{patient.time}</h1>
+                      patientsList.map((patient) => (
+                        <div key={patient.id} className='w-[170px] h-min ml-5 mt-5 bg-slate-800 rounded-lg inline-block p-3'>
+                          <div>
+                            <h1 className='text-white text-sm'><span className='font-bold'>Name: </span>{patient.name}</h1>
+                            <h1 className='text-white text-sm'><span className='font-bold'>Address:</span> {patient.address}</h1>
+                            <h1 className='text-white text-sm'><span className='font-bold'>Phone number:</span> {patient.phone}</h1>
+                            <h1 className='text-white text-sm'><span className='font-bold'>Age:</span> {patient.age}</h1>
+                            <h1 className='text-white text-sm'><span className='font-bold'>Gender:</span> {patient.gender}</h1>
+                            <h1 className='text-white text-sm'><span className='font-bold'>Issue:</span> {patient.issue}</h1>
+                            <h1 className='text-white text-sm'><span className='font-bold'>Doctor:</span> {patient.doctor}</h1>
+                            <h1 className='text-white text-sm'><span className='font-bold'>Date: </span>{patient.doa}</h1>
+                            <h1 className='text-white text-sm'><span className='font-bold'>Time: </span>{patient.time}</h1>
+                          </div>
+                          <div className='mt-5 text-right text-gray-300'>
+                            <i className="fa-solid fa-pen-to-square hover:cursor-pointer hover:text-gray-100" onClick={() => handleEdit(patient.id)}></i>
+                          </div>
                         </div>
-                        <div className='mt-5 text-right text-gray-300'>
-                          <i className="fa-solid fa-pen-to-square hover:cursor-pointer hover:text-gray-100" onClick={() => handleEdit(patient.id)}></i>
-                        </div>
-                      </div>
-                    ))
+                      ))
+                
                   )
                 )
               }

@@ -38,7 +38,6 @@ const News = () => {
             setData(data.articles);
         } catch (error) {
             console.error("Failed to fetch news:", error);
-            alert("Failed to fetch news");
         } finally {
             setLoading(false);
         }

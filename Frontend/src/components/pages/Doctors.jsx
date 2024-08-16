@@ -349,9 +349,6 @@ const Doctors = () => {
                     )
                   )
                 }
-                {
-                }
-
                 {showModal && selectedDoctor && (
                   <div className='fixed inset-0 bg-opacity-10 backdrop-blur-lg flex justify-center'>
                     <div className='mt-20 ml-[100px] h-min w-[400px] flex flex-col gap-3 hover:cursor-pointer text-white bg-gray-800 p-7 rounded-xl'>
