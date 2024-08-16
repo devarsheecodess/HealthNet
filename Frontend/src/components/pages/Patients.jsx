@@ -11,6 +11,8 @@ const Patients = () => {
 
   const [filteredPatients, setFilteredPatients] = useState(patientsList);
 
+  const [loading, setLoading] = useState(false);
+
   const [search, setSearch] = useState("");
   const URL = import.meta.env.VITE_BACKEND_URL;
 
@@ -58,6 +60,7 @@ const Patients = () => {
 
   const fetchPatients = async () => {
     try {
+      setLoading(true);
       const parentID = localStorage.getItem('id');
 
       const response = await axios.get(`${URL}/patients`, {
@@ -67,6 +70,8 @@ const Patients = () => {
       setPatientsList(response.data);
     } catch (error) {
       console.error('Error fetching patients:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -212,45 +217,53 @@ const Patients = () => {
           {/* DISPLAY */}
           <div className='bg-white md:w-[600px] h-[550px] rounded-lg overflow-y-scroll'>
             <div className='flex flex-wrap justify-start'>
-              {filteredPatients && filteredPatients.length > 0 ? (
-                filteredPatients.map((patient) => (
-                  <div key={patient.id} className='w-[170px] h-min ml-5 mt-5 bg-slate-800 rounded-lg inline-block p-3'>
-                    <div>
-                      <h1 className='text-white text-sm'><span className='font-bold'>Name: </span>{patient.name}</h1>
-                      <h1 className='text-white text-sm'><span className='font-bold'>Address:</span> {patient.address}</h1>
-                      <h1 className='text-white text-sm'><span className='font-bold'>Phone number:</span> {patient.phone}</h1>
-                      <h1 className='text-white text-sm'><span className='font-bold'>Age:</span> {patient.age}</h1>
-                      <h1 className='text-white text-sm'><span className='font-bold'>Gender:</span> {patient.gender}</h1>
-                      <h1 className='text-white text-sm'><span className='font-bold'>Issue:</span> {patient.issue}</h1>
-                      <h1 className='text-white text-sm'><span className='font-bold'>Doctor:</span> {patient.doctor}</h1>
-                      <h1 className='text-white text-sm'><span className='font-bold'>Date: </span>{patient.doa}</h1>
-                      <h1 className='text-white text-sm'><span className='font-bold'>Time: </span>{patient.time}</h1>
-                    </div>
-                    <div className='mt-5 text-right text-gray-300'>
-                      <i className="fa-solid fa-pen-to-square hover:cursor-pointer hover:text-gray-100" onClick={() => handleEdit(patient.id)}></i>
-                    </div>
+              {
+                loading ? (
+                  <div className='flex justify-center ml-5'>
+                    <p>Loading...</p>
                   </div>
-                ))
-              ) : (
-                patientsList.map((patient) => (
-                  <div key={patient.id} className='w-[170px] h-min ml-5 mt-5 bg-slate-800 rounded-lg inline-block p-3'>
-                    <div>
-                      <h1 className='text-white text-sm'><span className='font-bold'>Name: </span>{patient.name}</h1>
-                      <h1 className='text-white text-sm'><span className='font-bold'>Address:</span> {patient.address}</h1>
-                      <h1 className='text-white text-sm'><span className='font-bold'>Phone number:</span> {patient.phone}</h1>
-                      <h1 className='text-white text-sm'><span className='font-bold'>Age:</span> {patient.age}</h1>
-                      <h1 className='text-white text-sm'><span className='font-bold'>Gender:</span> {patient.gender}</h1>
-                      <h1 className='text-white text-sm'><span className='font-bold'>Issue:</span> {patient.issue}</h1>
-                      <h1 className='text-white text-sm'><span className='font-bold'>Doctor:</span> {patient.doctor}</h1>
-                      <h1 className='text-white text-sm'><span className='font-bold'>Date: </span>{patient.doa}</h1>
-                      <h1 className='text-white text-sm'><span className='font-bold'>Time: </span>{patient.time}</h1>
-                    </div>
-                    <div className='mt-5 text-right text-gray-300'>
-                      <i className="fa-solid fa-pen-to-square hover:cursor-pointer hover:text-gray-100" onClick={() => handleEdit(patient.id)}></i>
-                    </div>
-                  </div>
-                ))
-              )}
+                ) : (
+                  filteredPatients && filteredPatients.length > 0 ? (
+                    filteredPatients.map((patient) => (
+                      <div key={patient.id} className='w-[170px] h-min ml-5 mt-5 bg-slate-800 rounded-lg inline-block p-3'>
+                        <div>
+                          <h1 className='text-white text-sm'><span className='font-bold'>Name: </span>{patient.name}</h1>
+                          <h1 className='text-white text-sm'><span className='font-bold'>Address:</span> {patient.address}</h1>
+                          <h1 className='text-white text-sm'><span className='font-bold'>Phone number:</span> {patient.phone}</h1>
+                          <h1 className='text-white text-sm'><span className='font-bold'>Age:</span> {patient.age}</h1>
+                          <h1 className='text-white text-sm'><span className='font-bold'>Gender:</span> {patient.gender}</h1>
+                          <h1 className='text-white text-sm'><span className='font-bold'>Issue:</span> {patient.issue}</h1>
+                          <h1 className='text-white text-sm'><span className='font-bold'>Doctor:</span> {patient.doctor}</h1>
+                          <h1 className='text-white text-sm'><span className='font-bold'>Date: </span>{patient.doa}</h1>
+                          <h1 className='text-white text-sm'><span className='font-bold'>Time: </span>{patient.time}</h1>
+                        </div>
+                        <div className='mt-5 text-right text-gray-300'>
+                          <i className="fa-solid fa-pen-to-square hover:cursor-pointer hover:text-gray-100" onClick={() => handleEdit(patient.id)}></i>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    patientsList.map((patient) => (
+                      <div key={patient.id} className='w-[170px] h-min ml-5 mt-5 bg-slate-800 rounded-lg inline-block p-3'>
+                        <div>
+                          <h1 className='text-white text-sm'><span className='font-bold'>Name: </span>{patient.name}</h1>
+                          <h1 className='text-white text-sm'><span className='font-bold'>Address:</span> {patient.address}</h1>
+                          <h1 className='text-white text-sm'><span className='font-bold'>Phone number:</span> {patient.phone}</h1>
+                          <h1 className='text-white text-sm'><span className='font-bold'>Age:</span> {patient.age}</h1>
+                          <h1 className='text-white text-sm'><span className='font-bold'>Gender:</span> {patient.gender}</h1>
+                          <h1 className='text-white text-sm'><span className='font-bold'>Issue:</span> {patient.issue}</h1>
+                          <h1 className='text-white text-sm'><span className='font-bold'>Doctor:</span> {patient.doctor}</h1>
+                          <h1 className='text-white text-sm'><span className='font-bold'>Date: </span>{patient.doa}</h1>
+                          <h1 className='text-white text-sm'><span className='font-bold'>Time: </span>{patient.time}</h1>
+                        </div>
+                        <div className='mt-5 text-right text-gray-300'>
+                          <i className="fa-solid fa-pen-to-square hover:cursor-pointer hover:text-gray-100" onClick={() => handleEdit(patient.id)}></i>
+                        </div>
+                      </div>
+                    ))
+                  )
+                )
+              }
             </div>
           </div>
         </div>

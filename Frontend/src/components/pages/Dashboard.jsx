@@ -1,4 +1,4 @@
-import { React, useEffect, useState } from 'react'
+import { React, useEffect, useState, Suspense, lazy } from 'react'
 import { useParams } from 'react-router-dom'
 import dashIMG from '../../assets/dashboard.png'
 import axios from 'axios'
@@ -10,6 +10,8 @@ const override = {
   margin: "0 auto",
   borderColor: "red",
 };
+
+const DashTable = lazy(() => import('./DashTable'));
 
 const Dashboard = () => {
   const [greeting, setGreeting] = useState('')
@@ -110,31 +112,6 @@ const Dashboard = () => {
     setTotalPatients(totalPatients)
   }
 
-  const handleDelete = async (id) => {
-    const cf = confirm("Are you sure you want to delete this patient?");
-    if (!cf) return;
-    try {
-      const response = await axios.delete(`${URL}/patients`, { params: { id } });
-      console.log(response.data);
-
-      toast.success("Patient deleted successfully!");
-    } catch (error) {
-      console.error('Error deleting patient:', error);
-      toast.error('Failed to delete patient. Please try again.');
-    }
-  };
-
-  const handleDone = async (id) => {
-    try {
-      setShowPriceModal(true);
-      setDoneID(id);
-
-    } catch (error) {
-      console.error('Error marking patient as done:', error);
-      toast.error('Failed to mark patient as done. Please try again.');
-    }
-  }
-
   const submitPrice = async () => {
     try {
       // Prepare the data to be sent
@@ -216,35 +193,9 @@ const Dashboard = () => {
         </div>
 
         {/* Table */}
-        <div className="overflow-x-auto shadow-md sm:rounded-lg mt-10 bg-white">
-          <table className="w-full text-sm text-left rtl:text-right text-gray-500">
-            <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-[#03071C] dark:text-gray-400">
-              <tr>
-                <th scope="col" className="px-6 py-3">Patients</th>
-                <th scope="col" className="px-6 py-3">Date</th>
-                <th scope="col" className="px-6 py-3">Time</th>
-                <th scope="col" className="px-6 py-3">Doctor</th>
-                <th scope="col" className="px-6 py-3">Issue</th>
-                <th scope="col" className="px-6 py-3">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {patientsList.length > 0 ? patientsList.map((patient, index) => (
-                <tr className="odd:bg-white even:bg-gray-50 even:dark:bg-gray-300 border-b">
-                  <th scope="row" className="px-6 py-4 text-gray-600 font-medium whitespace-nowrap">{patient.name}</th>
-                  <td className="px-6 py-4 text-gray-600">{patient.doa}</td>
-                  <td className="px-6 py-4 text-gray-600">{patient.time}</td>
-                  <td className="px-6 py-4 text-gray-600">{patient.doctor}</td>
-                  <td className="px-6 py-4 text-gray-600">{patient.issue}</td>
-                  <td className="px-6 py-4 text-gray-600">
-                    <i className="fa-solid fa-trash text-red-800 hover:text-red-500 cursor-pointer" onClick={(e) => handleDelete(patient.id)}></i>
-                    <i className="fa-solid fa-circle-check ml-5 text-green-900 hover:text-green-500 cursor-pointer" onClick={(e) => handleDone(patient.id)}></i>
-                  </td>
-                </tr>
-              )) : <div className='flex justify-center'><p className='text-center text-gray-700 font-medium'>No appointments!</p></div>}
-            </tbody>
-          </table>
-        </div>
+        <Suspense>
+          <DashTable />
+        </Suspense>
       </div>
       {showPriceModal && (
         <div className='fixed inset-0 flex justify-center items-center backdrop-blur-sm z-50'>

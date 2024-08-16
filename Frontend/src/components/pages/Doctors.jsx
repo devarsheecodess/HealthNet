@@ -14,6 +14,8 @@ const Doctors = () => {
 
   const [search, setSearch] = useState("");
 
+  const [loading, setLoading] = useState(false);
+
   const [filteredDoctors, setFilteredDoctors] = useState(doctorsList);
   const URL = import.meta.env.VITE_BACKEND_URL;
 
@@ -102,6 +104,7 @@ const Doctors = () => {
 
   const fetchDoctors = async () => {
     try {
+      setLoading(true);
       const parentID = localStorage.getItem('id');
 
       const response = await axios.get(`${URL}/doctors`, {
@@ -111,6 +114,9 @@ const Doctors = () => {
       setDoctorsList(response.data);
     } catch (error) {
       console.error('Error fetching doctors:', error);
+    }
+    finally {
+      setLoading(false);
     }
   };
 
@@ -166,7 +172,7 @@ const Doctors = () => {
 
   useEffect(() => {
     fetchDoctors();
-  }, [doctors, doctorsList, filteredDoctors]);
+  }, [doctorsList.length]);
 
   return (
     <div className='bg-[#d0d0d0] min-h-screen'> {/* Background color and full screen height */}
@@ -298,44 +304,53 @@ const Doctors = () => {
             <div className='flex flex-wrap justify-start'> {/* Container for boxes, ensuring they are laid out properly */}
               <div>
                 {
-                  filteredDoctors && filteredDoctors.length > 0 ? (
-                    filteredDoctors.map((doctor) => (
-                      <div key={doctor.id} className='w-full sm:w-[170px] h-auto sm:h-60 m-2 sm:ml-5 sm:mt-5 bg-slate-800 rounded-lg'>
-                        <div className='flex justify-center'>
-                          <img src={doctor.image} alt='doctor' className='w-20 h-20 mt-5 rounded-full' />
-                        </div>
-                        <div className='mt-5'>
-                          <h1 className='text-white font-bold text-center text-sm'>{doctor.name}</h1>
-                          <p className='text-white text-sm text-center'>{doctor.department}</p>
-                        </div>
-                        <div className='mt-5 text-right mr-4 text-gray-300'>
-                          <i className="fa-solid fa-circle-info hover:cursor-pointer hover:text-gray-100" onClick={() => handleModalToggle(doctor)}></i>
-                          <i className="fa-solid fa-trash ml-4 hover:cursor-pointer hover:text-red-400" onClick={() => handleDelete(doctor.id)}></i>
-                          <i className="fa-solid fa-pen-to-square ml-4 hover:cursor-pointer hover:text-gray-100" onClick={() => handleEdit(doctor.id)}></i>
-                        </div>
-                      </div>
-                    ))
+                  loading ? (
+                    <div className='flex justify-center ml-5'>
+                      <p>Loading...</p>
+                    </div>
                   ) : (
-                    doctorsList.map((doctor) => (
-                      <div key={doctor.id} className='w-[170px] h-60 ml-5 mt-5 bg-slate-800 rounded-lg inline-block'>
-                        <div className='flex justify-center'>
-                          <img src={doctor.image} alt='doctor' className='w-20 h-20 mt-5 rounded-full' />
+                    filteredDoctors && filteredDoctors.length > 0 ? (
+                      filteredDoctors.map((doctor) => (
+                        <div key={doctor.id} className='w-full sm:w-[170px] h-auto sm:h-60 m-2 sm:ml-5 sm:mt-5 bg-slate-800 rounded-lg'>
+                          <div className='flex justify-center'>
+                            <img src={doctor.image} alt='doctor' className='w-20 h-20 mt-5 rounded-full' />
+                          </div>
+                          <div className='mt-5'>
+                            <h1 className='text-white font-bold text-center text-sm'>{doctor.name}</h1>
+                            <p className='text-white text-sm text-center'>{doctor.department}</p>
+                          </div>
+                          <div className='mt-5 text-right mr-4 text-gray-300'>
+                            <i className="fa-solid fa-circle-info hover:cursor-pointer hover:text-gray-100" onClick={() => handleModalToggle(doctor)}></i>
+                            <i className="fa-solid fa-trash ml-4 hover:cursor-pointer hover:text-red-400" onClick={() => handleDelete(doctor.id)}></i>
+                            <i className="fa-solid fa-pen-to-square ml-4 hover:cursor-pointer hover:text-gray-100" onClick={() => handleEdit(doctor.id)}></i>
+                          </div>
                         </div>
-                        <div className='mt-10'>
-                          <h1 className='text-white font-bold text-center text-sm'>{doctor.name}</h1>
-                          <p className='text-white text-sm text-center'>{doctor.department}</p>
+                      ))
+                    ) : (
+                      doctorsList.map((doctor) => (
+                        <div key={doctor.id} className='w-[170px] h-60 ml-5 mt-5 bg-slate-800 rounded-lg inline-block'>
+                          <div className='flex justify-center'>
+                            <img src={doctor.image} alt='doctor' className='w-20 h-20 mt-5 rounded-full' />
+                          </div>
+                          <div className='mt-10'>
+                            <h1 className='text-white font-bold text-center text-sm'>{doctor.name}</h1>
+                            <p className='text-white text-sm text-center'>{doctor.department}</p>
+                          </div>
+                          <div className='mt-5 text-right mr-4 text-gray-300'>
+                            <i
+                              className="fa-solid fa-circle-info hover:cursor-pointer hover:text-gray-100"
+                              onClick={() => handleModalToggle(doctor)}
+                            ></i>
+                            <i className="fa-solid fa-trash ml-4 hover:cursor-pointer hover:text-red-400" onClick={() => handleDelete(doctor.id)}></i>
+                            <i className="fa-solid fa-pen-to-square ml-4 hover:cursor-pointer hover:text-gray-100" onClick={() => handleEdit(doctor.id)}></i>
+                          </div>
                         </div>
-                        <div className='mt-5 text-right mr-4 text-gray-300'>
-                          <i
-                            className="fa-solid fa-circle-info hover:cursor-pointer hover:text-gray-100"
-                            onClick={() => handleModalToggle(doctor)}
-                          ></i>
-                          <i className="fa-solid fa-trash ml-4 hover:cursor-pointer hover:text-red-400" onClick={() => handleDelete(doctor.id)}></i>
-                          <i className="fa-solid fa-pen-to-square ml-4 hover:cursor-pointer hover:text-gray-100" onClick={() => handleEdit(doctor.id)}></i>
-                        </div>
-                      </div>
-                    ))
-                  )}
+                      ))
+                    )
+                  )
+                }
+                {
+                }
 
                 {showModal && selectedDoctor && (
                   <div className='fixed inset-0 bg-opacity-10 backdrop-blur-lg flex justify-center'>
