@@ -4,8 +4,6 @@ import { toast } from "react-toastify";
 import { v4 as uuidv4 } from 'uuid';
 
 const Doctors = () => {
-  const fileInputRef = useRef(null);
-  const [selectedImage, setSelectedImage] = useState(null);
   const [doctors, setDoctors] = useState({ image: "", name: "", address: "", phone: "", age: "", gender: "", dob: "", lisence: "", department: "", doj: "", salary: "" });
   const [doctorsList, setDoctorsList] = useState([]);
 
@@ -16,6 +14,8 @@ const Doctors = () => {
 
   const [loading, setLoading] = useState(false);
 
+  const [base64PhotoURL, setBase64PhotoURL] = useState(null);
+
   const [filteredDoctors, setFilteredDoctors] = useState(doctorsList);
   const URL = import.meta.env.VITE_BACKEND_URL;
 
@@ -24,27 +24,16 @@ const Doctors = () => {
     setShowModal(!showModal);
   };
 
-  const handleImageChange = (e) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-
-      setSelectedImage(URL.createObjectURL(file));
-      setDoctors({ ...doctors, image: file });
-
+   // Convert file to base64
+   const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
       const reader = new FileReader();
-      reader.onload = (loadEvent) => {
-        setDoctors({ ...doctors, image: loadEvent.target.result });
+      reader.onloadend = () => {
+        setBase64PhotoURL(reader.result);
       };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const deleteImage = () => {
-    setSelectedImage(null);
-    setDoctors({ ...doctors, image: "" });
-
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
+      reader.readAsDataURL(file); // Converts the file to base64 URL
+      console.log(base64PhotoURL)
     }
   };
 
@@ -57,7 +46,7 @@ const Doctors = () => {
       const response = await axios.post(`${URL}/doctors`, {
         parentID: parentID,
         id: id,
-        image: selectedImage,
+        image: base64PhotoURL,
         name: doctors.name,
         address: doctors.address,
         phone: doctors.phone,
@@ -90,7 +79,6 @@ const Doctors = () => {
         salary: ""
       });
       localStorage.removeItem('image');
-      setSelectedImage(null);
     } catch (error) {
       console.error('Error adding doctor:', error);
       toast.error('Failed to add doctor. Please try again.');
@@ -189,11 +177,6 @@ const Doctors = () => {
                     <label htmlFor="image-upload" className="block mb-2 text-sm font-medium text-gray-900">Upload Image</label>
                     <input type="file" name='image' id="image-upload" accept="image/*" className="w-72 shadow-sm bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light" onChange={handleImageChange} />
                   </div>
-                  {selectedImage && (
-                    <button type='button' onClick={deleteImage} className="md:mt-6">
-                      <i className="fa-solid fa-trash text-2xl"></i>
-                    </button>
-                  )}
                 </div>
 
                 <div class="mb-5">
@@ -268,9 +251,9 @@ const Doctors = () => {
 
               {/* DISPLAY IMAGE */}
               <div className='ml-0 md:ml-44 mt-4 md:mt-0'>
-                {selectedImage && (
+                {base64PhotoURL && (
                   <div className="mt-4" style={{ width: '100px', height: '100px' }}>
-                    <img src={selectedImage} alt="Selected" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <img src={base64PhotoURL} alt="Selected" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   </div>
                 )}
               </div>
